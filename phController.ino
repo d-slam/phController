@@ -1,21 +1,18 @@
 #include "enums.h"
 
-//OVER!GLOBALS===============================================
+//VERY!GLOBALS===============================================
 #define RX_PH A1
 #define MOTORGATE 2
 
+#include "LCDScreen.h"
 
+//GLOBALS===============================================
 
 float volt = 0.0;
 
 float phSoll = 5.5;
 float phSollThres = 0.5;
 float phIst, phLast = 0.0;
-
-#include "LCDScreen.h"
-LCDScreen lcdScreen;
-
-//GLOBALS===============================================
 
 bool incFlag = false;
 bool decFlag = false;
@@ -31,10 +28,11 @@ float vecBuffer = 0;
 
 int incStateCheck = 0;
 
-
 statesSys_t SYSstate = SYS_WAIT;
 statesCal_t CALstate = CAL_START;
 statesRun_t RUNstate = RUN_GREEN;
+
+LCDScreen lcdScreen(&phLast, &phSoll, &phSollThres);
 
 //SETUP===============================================
 void setup()
@@ -44,8 +42,7 @@ void setup()
   Serial.begin(9600);
   Serial.println("hüüü??");
 
-  lcdScreen.drawSplashscreen("ph-Meter", 0, 0, "><(((°>", 0, 1, 1500); 
-
+  lcdScreen.drawStartScreen();
 
 }
 
@@ -54,8 +51,7 @@ void loop()
 {
   bufferPh();
 
-  //if (incBuffer >= nSmooth - 1 || (btnPrellFlag == false && adc_key_in != 1023) )
-  //lcdScreen.redrawLCD();
+  if (incBuffer >= nSmooth - 1 || (btnPrellFlag == false && adc_key_in != 1023) )
   lcdScreen.redraw(SYSstate, CALstate, RUNstate);
 
   incStateCheck++;
@@ -106,7 +102,6 @@ void checkButtons()
     break;
   }
 }
-
 void setMenu(int keyPressed)
 {
   switch (SYSstate)
@@ -180,6 +175,7 @@ void setMenu(int keyPressed)
     break;
   }
 }
+
 
 void checkState()
 {
