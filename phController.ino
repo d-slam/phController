@@ -1,10 +1,11 @@
 #include "enums.h"
 
 //VERY!GLOBALS===============================================
-#define RX_PH A1
+
 #define MOTORGATE 2
 
 #include "LCDScreen.h"
+#include "PhSonde.h"
 
 //GLOBALS===============================================
 
@@ -12,6 +13,7 @@ float volt = 0.0;
 
 float phSoll = 5.5;
 float phSollThres = 0.5;
+
 float phIst, phLast = 0.0;
 
 bool incFlag = false;
@@ -39,6 +41,8 @@ statesRun_t RUNstate = RUN_GREEN;
 
 LCDScreen lcdScreen(&phLast, &phSoll, &phSollThres);
 
+PhSonde phSonde;
+
 //SETUP===============================================
 void setup()
 {
@@ -50,9 +54,11 @@ void setup()
 //LOOP==========================================================
 void loop()
 {
-  bufferPh();
 
-  if (incBuffer >= nSmooth - 1 || (btnPrellFlag == false && adc_key_in != 1023))
+  phLast = phSonde.getPhIst();
+  //bufferPh();
+
+  //if (incBuffer >= nSmooth - 1 || (btnPrellFlag == false && adc_key_in != 1023))
     lcdScreen.redraw(SYSstate, CALstate, RUNstate);
 
   incStateCheck++;

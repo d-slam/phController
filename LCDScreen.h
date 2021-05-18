@@ -6,7 +6,7 @@
 #ifndef LCDScreen_h
 #define LCDScreen_h
 
-#include "Arduino.h"
+// #include "Arduino.h" //lei für strings, honni ober im mom koane
 
 #include <LiquidCrystal.h>
 
@@ -156,13 +156,13 @@ private:
 
     //delay(1500);
   }
-  void drawSplashscreen(const char *stringA, uint8_t xA, uint8_t yA, const char *stringB, uint8_t xB, uint8_t yB, int tDelay)
+  void drawSplashscreen(const char *cA, uint8_t xA, uint8_t yA, const char *cB, uint8_t xB, uint8_t yB, int tDelay)
   {
     lcd.clear();
     lcd.setCursor(xA, yA);
-    lcd.print(stringA);
+    lcd.print(cA);
     lcd.setCursor(xB, yB);
-    lcd.print(stringB);
+    lcd.print(cB);
     delay(tDelay);
   }
   void drawLeftScreen()
@@ -170,10 +170,10 @@ private:
     writeAtXY("Ph Ist", 0, 0);
     writeFloatAtXY(*pPhLast, 0, 1);
   }
-  void writeAtXY(const char *string, uint8_t x, uint8_t y)
+  void writeAtXY(const char *c, uint8_t x, uint8_t y)
   {
     lcd.setCursor(x, y);
-    lcd.print(string);
+    lcd.print(c);
   }
   void writeFloatAtXY(float value, uint8_t x, uint8_t y)
   {
