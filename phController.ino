@@ -4,9 +4,7 @@
 #define RX_PH A1
 #define MOTORGATE 2
 
-statesSys_t SYSstate = SYS_WAIT;
-statesCal_t CALstate = CAL_START;
-statesRun_t RUNstate = RUN_GREEN;
+
 
 float volt = 0.0;
 
@@ -33,16 +31,21 @@ float vecBuffer = 0;
 
 int incStateCheck = 0;
 
+
+statesSys_t SYSstate = SYS_WAIT;
+statesCal_t CALstate = CAL_START;
+statesRun_t RUNstate = RUN_GREEN;
+
 //SETUP===============================================
 void setup()
 {
   pinMode(MOTORGATE, OUTPUT);
 
   Serial.begin(9600);
-  Serial.println("Hüü");
+  Serial.println("hüüü??");
 
-  lcdScreen.drawSplashscreen("ph-Meter", 0, 0, "><(((°>", 0, 1, 1500);
-  lcdScreen.redrawLCD();
+  lcdScreen.drawSplashscreen("ph-Meter", 0, 0, "><(((°>", 0, 1, 1500); 
+
 
 }
 
@@ -52,7 +55,8 @@ void loop()
   bufferPh();
 
   //if (incBuffer >= nSmooth - 1 || (btnPrellFlag == false && adc_key_in != 1023) )
-  lcdScreen.redrawLCD();
+  //lcdScreen.redrawLCD();
+  lcdScreen.redraw(SYSstate, CALstate, RUNstate);
 
   incStateCheck++;
   if (SYSstate == SYS_RUN && incStateCheck >= 50)
@@ -102,6 +106,7 @@ void checkButtons()
     break;
   }
 }
+
 void setMenu(int keyPressed)
 {
   switch (SYSstate)

@@ -18,7 +18,7 @@ class LCDScreen
 public:
   LCDScreen() { lcd.begin(16, 2); }
 
-  void redrawLCD()
+  void redraw(const statesSys_t SYSstate, const statesCal_t CALstate, const statesRun_t RUNstate)
   {
     lcd.clear();
     drawLeftScreen();
@@ -105,6 +105,17 @@ public:
     }
   }
 
+  void drawSplashscreen(const char *stringA, uint8_t xA, uint8_t yA, const char *stringB, uint8_t xB, uint8_t yB, int tDelay)
+  {
+    lcd.clear();
+    lcd.setCursor(xA, yA);
+    lcd.print(stringA);
+    lcd.setCursor(xB, yB);
+    lcd.print(stringB);
+    delay(tDelay);
+  }
+
+private:
   void writeAtXY(const char *string, uint8_t x, uint8_t y)
   {
     lcd.setCursor(x, y);
@@ -117,23 +128,11 @@ public:
     lcd.print(value);
   }
 
-  void drawSplashscreen(const char *stringA, uint8_t xA, uint8_t yA, const char *stringB, uint8_t xB, uint8_t yB, int tDelay)
-  {
-    lcd.clear();
-    lcd.setCursor(xA, yA);
-    lcd.print(stringA);
-    lcd.setCursor(xB, yB);
-    lcd.print(stringB);
-    delay(tDelay);
-  }
-
   void drawLeftScreen()
   {
     writeAtXY("Ph Ist", 0, 0);
     writeFloatAtXY(phLast, 0, 1);
   }
-
-private:
 };
 
 #endif
