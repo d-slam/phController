@@ -16,7 +16,8 @@ LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
 class LCDScreen
 {
 public:
-  LCDScreen(float *_phLast, float *_phSoll, float *_phSollThres) : pPhLast(_phLast), pPhSoll(_phSoll), pPhSollThres(_phSollThres)
+  LCDScreen(float *_phLast, float *_phSoll, float *_phSollThres)
+      : pPhLast(_phLast), pPhSoll(_phSoll), pPhSollThres(_phSollThres)
   {
     lcd.begin(16, 2);
   }
@@ -25,7 +26,6 @@ public:
   {
     lcd.clear();
     drawLeftScreen();
-
     switch (SYSstate)
     {
     case SYS_RUN:
@@ -34,48 +34,38 @@ public:
       case RUN_RED:
         drawRUN_RED();
         break;
-
       case RUN_YELLOW:
         drawRUN_YELLOW();
         break;
-
       case RUN_GREEN:
         drawRUN_GREEN();
         break;
       }
       break;
-
     case SYS_WAIT:
       drawSYS_WAIT();
       break;
-
     case SYS_SET_SOLL:
       drawSYS_SET_SOLL();
       break;
-
     case SYS_SET_THRES:
       drawSYS_SET_THRES();
       break;
-
     case SYS_CAL:
       switch (CALstate)
       {
       case CAL_START:
         drawCAL_START();
         break;
-
       case CAL_PH4:
         drawCAL_PH4();
         break;
-
       case CAL_PH7:
         drawCAL_PH7();
         break;
-
       case CAL_CONF:
         drawCAL_CONF();
         break;
-
       case CAL_OK:
         drawCAL_OK();
         break;
@@ -84,6 +74,12 @@ public:
     }
   }
 
+  void drawStartScreen()
+  {
+    drawSplashscreen("ph-Meter", 0, 0, "><(((°>", 0, 1, 1500);
+  }
+
+private:
   void drawRUN_RED()
   {
     writeAtXY("Pumpt", 8, 0);
@@ -160,12 +156,6 @@ public:
 
     //delay(1500);
   }
-
-  void drawStartScreen()
-  {
-    drawSplashscreen("ph-Meter", 0, 0, "><(((°>", 0, 1, 1500);
-  }
-
   void drawSplashscreen(const char *stringA, uint8_t xA, uint8_t yA, const char *stringB, uint8_t xB, uint8_t yB, int tDelay)
   {
     lcd.clear();
@@ -175,16 +165,11 @@ public:
     lcd.print(stringB);
     delay(tDelay);
   }
-
-
-
-private:
   void drawLeftScreen()
   {
     writeAtXY("Ph Ist", 0, 0);
     writeFloatAtXY(*pPhLast, 0, 1);
   }
-
   void writeAtXY(const char *string, uint8_t x, uint8_t y)
   {
     lcd.setCursor(x, y);
@@ -197,6 +182,6 @@ private:
   }
 
   float *pPhLast, *pPhSoll, *pPhSollThres;
-};
 
+};
 #endif

@@ -6,8 +6,6 @@
 
 #include "LCDScreen.h"
 
-
-
 //GLOBALS===============================================
 
 float volt = 0.0;
@@ -15,7 +13,6 @@ float volt = 0.0;
 float phSoll = 5.5;
 float phSollThres = 0.5;
 float phIst, phLast = 0.0;
-
 
 bool incFlag = false;
 bool decFlag = false;
@@ -30,7 +27,6 @@ int incBuffer = 0;
 float vecBuffer = 0;
 
 int incStateCheck = 0;
-
 
 statesSys_t SYSstate = SYS_WAIT;
 statesCal_t CALstate = CAL_START;
@@ -55,7 +51,7 @@ void loop()
 {
   bufferPh();
 
-  //if (incBuffer >= nSmooth - 1 || (btnPrellFlag == false && adc_key_in != 1023) )
+  if (incBuffer >= nSmooth - 1 || (btnPrellFlag == false && adc_key_in != 1023) )
   lcdScreen.redraw(SYSstate, CALstate, RUNstate);
 
   incStateCheck++;
@@ -106,7 +102,6 @@ void checkButtons()
     break;
   }
 }
-
 void setMenu(int keyPressed)
 {
   switch (SYSstate)
@@ -180,6 +175,7 @@ void setMenu(int keyPressed)
     break;
   }
 }
+
 
 void checkState()
 {
