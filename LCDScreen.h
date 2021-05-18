@@ -48,18 +48,22 @@ public:
       break;
 
     case SYS_WAIT:
+      drawLeftScreen();
       writeAtXY("Wartet...", 8, 0);
       writeAtXY("  <-Go<<", 8, 1);
       break;
 
     case SYS_SET_SOLL:
-      writeAtXY("set-> Soll", 6, 0);
+      lcd.clear();
+      writeAtXY("->Ph Soll-Wert", 2, 0);
       writeFloatAtXY(phSoll, 8, 1);
       break;
 
     case SYS_SET_THRES:
-      writeAtXY("set-> Thres", 6, 0);
-      writeFloatAtXY(phSollThres, 8, 1);
+      lcd.clear();
+      writeAtXY("->Ph Threshold", 2, 0);
+      writeAtXY("+", 12, 1);
+      writeFloatAtXY(phSollThres, 13, 1);
       break;
 
     case SYS_CAL:
@@ -85,7 +89,7 @@ public:
 
       case CAL_CONF:
         lcd.clear();
-        writeAtXY("CANCEL?   apply?", 0, 0);
+        writeAtXY("cancel?   apply?", 0, 0);
         writeAtXY("[LEFT]  [SELECT]", 0, 1);
         break;
 
@@ -131,32 +135,5 @@ public:
 
 private:
 };
-
-//btnINIT============================================
-int lcd_key = 0;
-int adc_key_in = 0;
-#define btnRIGHT 0
-#define btnUP 1
-#define btnDOWN 2
-#define btnLEFT 3
-#define btnSELECT 4
-#define btnNONE 5
-int read_LCD_buttons()
-{
-  adc_key_in = analogRead(0); // read the value from the sensor
-  if (adc_key_in > 1000)
-    return btnNONE;
-  if (adc_key_in < 50)
-    return btnRIGHT;
-  if (adc_key_in < 250)
-    return btnUP;
-  if (adc_key_in < 450)
-    return btnDOWN;
-  if (adc_key_in < 650)
-    return btnLEFT;
-  if (adc_key_in < 850)
-    return btnSELECT;
-  return btnNONE; // when all others fail, return this...
-}
 
 #endif

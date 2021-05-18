@@ -1,11 +1,12 @@
 #include "enums.h"
 
-statesSystem SYSstate = SYS_WAIT;
-statesCal CALstate = CAL_START;
-statesRun RUNstate = RUN_GREEN;
 //OVER!GLOBALS===============================================
 #define RX_PH A1
 #define MOTORGATE 2
+
+statesSys_t SYSstate = SYS_WAIT;
+statesCal_t CALstate = CAL_START;
+statesRun_t RUNstate = RUN_GREEN;
 
 float volt = 0.0;
 
@@ -13,8 +14,8 @@ float phSoll = 5.5;
 float phSollThres = 0.5;
 float phIst, phLast = 0.0;
 
-
 #include "LCDScreen.h"
+LCDScreen lcdScreen;
 
 //GLOBALS===============================================
 
@@ -31,10 +32,6 @@ int incBuffer = 0;
 float vecBuffer = 0;
 
 int incStateCheck = 0;
-
-LCDScreen lcdScreen;
-
-//bool noPrell = true;
 
 //SETUP===============================================
 void setup()
@@ -54,7 +51,7 @@ void loop()
 {
   bufferPh();
 
-  //if (incBuffer >= nSmooth - 1 || (noPrell == false && adc_key_in != 1023) )
+  //if (incBuffer >= nSmooth - 1 || (btnPrellFlag == false && adc_key_in != 1023) )
   lcdScreen.redrawLCD();
 
   incStateCheck++;
