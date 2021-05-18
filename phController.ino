@@ -1,4 +1,4 @@
-
+#include <LiquidCrystal.h>
 
 
 //OVER!GLOBALS===============================================
@@ -70,9 +70,9 @@ void setup()
   Serial.begin(9600);
   Serial.println("Hüü");
 
-  lcdScreen.drawSplashscreen();
+  lcdScreen.drawSplashscreen("ph-Meter", 0, 0, "><(((°>", 0, 1, 1500);
   lcdScreen.redrawLCD();
-  
+
 }
 
 //LOOP==========================================================
@@ -197,7 +197,7 @@ void setMenu(int keyPressed)
       break;
 
     case CAL_OK:
-      CALstate = CAL_PH4;
+      CALstate = CAL_START;
       SYSstate = SYS_WAIT;
       break;
     }

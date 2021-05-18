@@ -10,117 +10,123 @@
 
 #include <LiquidCrystal.h>
 
-
 //LCD_INIT============================================
 LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
 
 class LCDScreen
 {
 public:
-  LCDScreen()  {    lcd.begin(16, 2);  }
-
-  void drawSplashscreen()
-  {
-    lcd.setCursor(0, 0);
-    lcd.print("ph-Meter");
-    lcd.setCursor(0, 1);
-    lcd.print("><(((°>");
-    delay(1500);
-    lcd.clear();
-  }
+  LCDScreen() { lcd.begin(16, 2); }
 
   void redrawLCD()
   {
     lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("ph Ist");
-    lcd.setCursor(0, 1);
-    lcd.print(phLast);
+    drawLeftScreen();
 
     switch (SYSstate)
     {
     case SYS_RUN:
-    {
-      lcd.setCursor(8, 1);
-      lcd.print(phSoll);
-      lcd.setCursor(12, 1);
-      lcd.print("+0.5");
+
+      writeFloatAtXY(phSoll, 8, 1);
+      writeAtXY("+", 12, 1);
+      writeFloatAtXY(phSollThres, 13, 1);
 
       switch (RUNstate)
       {
       case RUN_RED:
-        lcd.setCursor(8, 0);
-        lcd.print("Pumpt   ");
+        writeAtXY("Pumpt", 8, 0);
         break;
 
       case RUN_YELLOW:
-        lcd.setCursor(8, 0);
-        lcd.print("In Range");
+        writeAtXY("In Range", 8, 0);
         break;
 
       case RUN_GREEN:
-        lcd.setCursor(8, 0);
-        lcd.print("Halte");
+        writeAtXY("Halte", 8, 0);
         break;
       }
       break;
-    }
+
     case SYS_WAIT:
-      lcd.setCursor(8, 1);
-      lcd.print("<-Lauf<<");
-      lcd.setCursor(8, 0);
-      lcd.print("Warten..");
+      writeAtXY("Wartet...", 8, 0);
+      writeAtXY("  <-Go<<", 8, 1);
       break;
 
     case SYS_SET_SOLL:
-      lcd.setCursor(8, 1);
-      lcd.print(phSoll);
-      lcd.setCursor(8, 0);
-      lcd.print("Set Soll");
+      writeAtXY("set-> Soll", 6, 0);
+      writeFloatAtXY(phSoll, 8, 1);
+      break;
+
+    case SYS_SET_THRES:
+      writeAtXY("set-> Thres", 6, 0);
+      writeFloatAtXY(phSollThres, 8, 1);
       break;
 
     case SYS_CAL:
-    {
       switch (CALstate)
       {
       case CAL_START:
-        lcd.setCursor(8, 1);
-        lcd.print("Start?");
-        lcd.setCursor(8, 0);
-        lcd.print("pH Cal");
+        lcd.clear();
+        writeAtXY("Start Cal?", 6, 0);
+        writeAtXY("[SELECT]", 8, 1);
         break;
 
       case CAL_PH4:
-        lcd.setCursor(8, 1);
-        lcd.print("Set?");
-        lcd.setCursor(8, 0);
-        lcd.print("ph 4");
+        drawLeftScreen();
+        writeAtXY("Cal", 8, 0);
+        writeAtXY("-> Ph4", 8, 1);
         break;
 
       case CAL_PH7:
-        lcd.setCursor(8, 1);
-        lcd.print("Set?");
-        lcd.setCursor(8, 0);
-        lcd.print("ph 7");
+        drawLeftScreen();
+        writeAtXY("Cal", 8, 0);
+        writeAtXY("-> Ph7", 8, 1);
         break;
 
       case CAL_CONF:
-        lcd.setCursor(8, 1);
-        lcd.print("Save?");
-        lcd.setCursor(8, 0);
-        lcd.print("Enter New Cal");
+        lcd.clear();
+        writeAtXY("CANCEL?   apply?", 0, 0);
+        writeAtXY("[LEFT]  [SELECT]", 0, 1);
         break;
 
       case CAL_OK:
-        lcd.setCursor(8, 1);
-        lcd.print("Save?");
-        lcd.setCursor(8, 0);
-        lcd.print("okokl");
+        lcd.clear();
+        writeAtXY("Callibration", 0, 0);
+        writeAtXY("Complette!", 6, 1);
+
+        //delay(1500);
         break;
       }
       break;
     }
-    }
+  }
+
+  void writeAtXY(const char *string, uint8_t x, uint8_t y)
+  {
+    lcd.setCursor(x, y);
+    lcd.print(string);
+  }
+
+  void writeFloatAtXY(float value, uint8_t x, uint8_t y)
+  {
+    lcd.setCursor(x, y);
+    lcd.print(value);
+  }
+
+  void drawSplashscreen(const char *stringA, uint8_t xA, uint8_t yA, const char *stringB, uint8_t xB, uint8_t yB, int tDelay)
+  {
+    lcd.clear();
+    lcd.setCursor(xA, yA);
+    lcd.print(stringA);
+    lcd.setCursor(xB, yB);
+    lcd.print(stringB);
+    delay(tDelay);
+  }
+
+  void drawLeftScreen()
+  {
+    writeAtXY("Ph Ist", 0, 0);
+    writeFloatAtXY(phLast, 0, 1);
   }
 
 private:
