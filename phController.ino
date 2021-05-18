@@ -46,7 +46,7 @@ void setup()
   Serial.begin(9600);
   Serial.println("hüüü??");
 
-  lcdScreen.drawSplashscreen("ph-Meter", 0, 0, "><(((°>", 0, 1, 1500); 
+  lcdScreen.drawStartScreen();
 
 }
 
