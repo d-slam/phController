@@ -1,37 +1,11 @@
-#include <LiquidCrystal.h>
+#include "enums.h"
 
-
+statesSystem SYSstate = SYS_WAIT;
+statesCal CALstate = CAL_START;
+statesRun RUNstate = RUN_GREEN;
 //OVER!GLOBALS===============================================
 #define RX_PH A1
 #define MOTORGATE 2
-
-typedef enum
-{
-  SYS_RUN,
-  SYS_WAIT,
-  SYS_SET_SOLL,
-  SYS_SET_THRES,
-  SYS_CAL
-} statesSystem;
-statesSystem SYSstate = SYS_WAIT;
-
-typedef enum
-{
-  CAL_START,
-  CAL_PH4,
-  CAL_PH7,
-  CAL_CONF,
-  CAL_OK
-} statesCal;
-statesCal CALstate = CAL_START;
-
-typedef enum
-{
-  RUN_RED,
-  RUN_YELLOW,
-  RUN_GREEN
-} statesRun;
-statesRun RUNstate = RUN_GREEN;
 
 float volt = 0.0;
 
