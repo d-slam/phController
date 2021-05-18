@@ -16,7 +16,10 @@ LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
 class LCDScreen
 {
 public:
-  LCDScreen() { lcd.begin(16, 2); }
+  LCDScreen(float *_phLast, float *_phSoll, float *_phSollThres) : pPhLast(_phLast), pPhSoll(_phSoll), pPhSollThres(_phSollThres)
+  {
+    lcd.begin(16, 2);
+  }
 
   void redraw(const statesSys_t SYSstate, const statesCal_t CALstate, const statesRun_t RUNstate)
   {
@@ -27,9 +30,9 @@ public:
     {
     case SYS_RUN:
 
-      writeFloatAtXY(phSoll, 8, 1);
+      writeFloatAtXY(*pPhSoll, 8, 1);
       writeAtXY("+", 12, 1);
-      writeFloatAtXY(phSollThres, 13, 1);
+      writeFloatAtXY(*pPhSollThres, 13, 1);
 
       switch (RUNstate)
       {
@@ -56,14 +59,14 @@ public:
     case SYS_SET_SOLL:
       lcd.clear();
       writeAtXY("->Ph Soll-Wert", 2, 0);
-      writeFloatAtXY(phSoll, 8, 1);
+      writeFloatAtXY(*pPhSoll, 8, 1);
       break;
 
     case SYS_SET_THRES:
       lcd.clear();
       writeAtXY("->Ph Threshold", 2, 0);
       writeAtXY("+", 12, 1);
-      writeFloatAtXY(phSollThres, 13, 1);
+      writeFloatAtXY(*pPhSollThres, 13, 1);
       break;
 
     case SYS_CAL:
@@ -104,7 +107,6 @@ public:
       break;
     }
   }
-
   void drawSplashscreen(const char *stringA, uint8_t xA, uint8_t yA, const char *stringB, uint8_t xB, uint8_t yB, int tDelay)
   {
     lcd.clear();
@@ -116,23 +118,24 @@ public:
   }
 
 private:
+  void drawLeftScreen()
+  {
+    writeAtXY("Ph Ist", 0, 0);
+    writeFloatAtXY(*pPhLast, 0, 1);
+  }
+
   void writeAtXY(const char *string, uint8_t x, uint8_t y)
   {
     lcd.setCursor(x, y);
     lcd.print(string);
   }
-
   void writeFloatAtXY(float value, uint8_t x, uint8_t y)
   {
     lcd.setCursor(x, y);
     lcd.print(value);
   }
 
-  void drawLeftScreen()
-  {
-    writeAtXY("Ph Ist", 0, 0);
-    writeFloatAtXY(phLast, 0, 1);
-  }
+  float *pPhLast, *pPhSoll, *pPhSollThres;
 };
 
 #endif
