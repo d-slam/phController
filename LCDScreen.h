@@ -74,10 +74,7 @@ public:
     }
   }
 
-  void drawStartScreen()
-  {
-    drawSplashscreen("ph-Meter", 0, 0, "><(((°>", 0, 1, 1500);
-  }
+  void drawStartScreen() { drawSplashscreen("ph-Meter", 0, 0, "><(((°>", 0, 1, 1500); }
 
 private:
   void drawRUN_RED()
@@ -96,14 +93,12 @@ private:
         "Halte", 8, 0);
     drawSollAndThres();
   }
-
   void drawSollAndThres()
   {
     writeFloatAtXY(*pPhSoll, 8, 1);
     writeAtXY("+", 12, 1);
     writeFloatAtXY(*pPhSollThres, 13, 1);
   }
-
   void drawSYS_WAIT()
   {
     drawLeftScreen();
@@ -123,7 +118,6 @@ private:
     writeAtXY("+", 12, 1);
     writeFloatAtXY(*pPhSollThres, 13, 1);
   }
-
   void drawCAL_START()
   {
     lcd.clear();
@@ -153,7 +147,6 @@ private:
     lcd.clear();
     writeAtXY("Callibration", 0, 0);
     writeAtXY("Complette!", 6, 1);
-
     //delay(1500);
   }
   void drawSplashscreen(const char *cA, uint8_t xA, uint8_t yA, const char *cB, uint8_t xB, uint8_t yB, int tDelay)
@@ -180,8 +173,6 @@ private:
     lcd.setCursor(x, y);
     lcd.print(value);
   }
-
   float *pPhLast, *pPhSoll, *pPhSollThres;
-
 };
 #endif

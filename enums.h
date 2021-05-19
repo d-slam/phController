@@ -1,12 +1,40 @@
 /*
-  enums - Library for boooa
-  Created by Mir diocane, November 66, 2021.
+  enums - Library for emus, defines and ol the bad mofos..
+  Created by Mir. Dio. della cane, November 66, A. D. 2021 ACorona
   Released into the public domain.
 */
 #ifndef enums_h
 #define enums_h
 
+////REALSHIZ
 
+#define ROT 1
+#define ROT_GELB 2
+#define GRUEN 3
+#define GELB 4
+
+void Ampel1(unsigned char Farbe); // schaltet Ampel1 auf eine Farbe
+void Ampel2(unsigned char Farbe); // schaltet Ampel2 auf eine Farbe
+
+unsigned char abfragee(); // fragt die Induktionsschleife ab
+typedef enum
+{
+  NORDSUED_ROTGELB,
+  NORDSUED_GRUEN,
+  NORDSUED_GELB,
+  ALLE_ROT_1,
+  OSTWEST_ROTGELB,
+  OSTWEST_GRUEN,
+  OSTWEST_GELB,
+  ALLE_ROT_2,
+  WARTE_NORDSUED
+} state_t;
+
+
+
+
+
+////OLT
 typedef enum stateSys_e
 {
   SYS_RUN,
@@ -15,7 +43,6 @@ typedef enum stateSys_e
   SYS_SET_THRES,
   SYS_CAL
 } statesSys_t;
-
 
 typedef enum statesCal_e
 {
@@ -26,14 +53,12 @@ typedef enum statesCal_e
   CAL_OK
 } statesCal_t;
 
-
 typedef enum statesRun_e
 {
   RUN_RED,
   RUN_YELLOW,
   RUN_GREEN
 } statesRun_t;
-
 
 //btnINIT============================================
 
@@ -62,6 +87,5 @@ int read_LCD_buttons()
     return btnSELECT;
   return btnNONE; // when all others fail, return this...
 }
-
 
 #endif
