@@ -13,6 +13,65 @@ class PhSonde
 public:
     float getPhIst()
     {
+        sampleVoltage();
+        phIst = calDelta * volt + calOffset;
+        return phIst;
+    }
+
+    void smoothPh()
+    {
+        int nSmooth = 20;
+        vecBuffer += phIst;
+        incBuffer++;
+        if (incBuffer >= nSmooth)
+        {
+            phLast = vecBuffer / nSmooth;
+            newValFlag = true;
+            incBuffer = 0;
+            vecBuffer = 0;
+        }
+    }
+
+    void setVolt4(float v)
+    {
+        volt4 = v;
+    }
+    void setVolt7(float v)
+    {
+        volt7 = v;
+    }
+    void calcDelta()
+    {
+        tempCalDelta = (7 - 4) / (volt7 - volt4);
+        tempCalOffset = 4 - (tempCalDelta * volt4);
+    }
+    void applyCallibration()
+    {
+        calDelta = tempCalDelta;
+        calOffset = tempCalOffset;
+    }
+
+private:
+    float tempCalDelta = 2.19;
+    float tempCalOffset = 2.85;
+
+    float volt7 = 0.0;
+    float volt4 = 0.0;
+
+    bool newValFlag = false;
+
+    float volt = 0.0;
+
+    float phIst, phLast = 0.0;
+
+    float calDelta = 2.19;
+    float calOffset = 2.85;
+
+    int incBuffer = 0;
+    float vecBuffer = 0;
+
+    void sampleVoltage()
+    {
         int sampleBuffer[10];
         int temp = 0;
         unsigned long int avgVal = 0;
@@ -39,37 +98,7 @@ public:
             avgVal += sampleBuffer[i];
 
         volt = ((float)avgVal * 5.0 / 1024 / 6);
-
-        phIst = calDelta * volt + calOffset;
-
-        vecBuffer += phIst;
-        incBuffer++;
-        if (incBuffer >= nSmooth)
-        {
-            phLast = vecBuffer / nSmooth;
-            incBuffer = 0;
-            vecBuffer = 0;
-            
-        }        
-        return phIst;
-        
     }
-
-
-
-private:
-
-float volt = 0.0;
-
-float phIst, phLast = 0.0;
-
-float calDelta = 2.19;
-float calOffset = 2.85;
-
-int nSmooth = 20;
-int incBuffer = 0;
-float vecBuffer = 0;
-
 };
 
 #endif

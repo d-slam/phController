@@ -11,27 +11,16 @@
 
 float volt = 0.0;
 
+float phIst = 0.0;
+float phLast = 0.0;
+
 float phSoll = 5.5;
 float phSollThres = 0.5;
-
-float phIst, phLast = 0.0;
 
 bool incFlag = false;
 bool decFlag = false;
 
 bool btnPrellFlag = false;
-
-float calDelta = 2.19;
-float calOffset = 2.85;
-
-float tempCalDelta = 0.0;
-float tempCalOffset = 0.0;
-float volt7 = 0.0;
-float volt4 = 0.0;
-
-int nSmooth = 20;
-int incBuffer = 0;
-float vecBuffer = 0;
 
 int incStateCheck = 0;
 
@@ -56,10 +45,9 @@ void loop()
 {
 
   phLast = phSonde.getPhIst();
-  //bufferPh();
 
   //if (incBuffer >= nSmooth - 1 || (btnPrellFlag == false && adc_key_in != 1023))
-    lcdScreen.redraw(SYSstate, CALstate, RUNstate);
+  lcdScreen.redraw(SYSstate, CALstate, RUNstate);
 
   incStateCheck++;
   //if ((SYSstate == SYS_RUN || SYSstate == SYS_SET_SOLL || SYSstate == SYS_SET_THRES) && incStateCheck >= 50)
@@ -68,47 +56,6 @@ void loop()
   checkButtons();
 }
 //MyMethodes==========================================================
-void bufferPh()
-{
-  int sampleBuffer[10];
-  int temp = 0;
-  unsigned long int avgVal = 0;
-
-  for (int i = 0; i < 10; i++)
-  {
-    sampleBuffer[i] = analogRead(RX_PH);
-    delay(10);
-  }
-
-  for (int i = 0; i < 9; i++)
-  {
-    for (int j = i + 1; j < 10; j++)
-    {
-      if (sampleBuffer[i] > sampleBuffer[j])
-      {
-        temp = sampleBuffer[i];
-        sampleBuffer[i] = sampleBuffer[j];
-        sampleBuffer[j] = temp;
-      }
-    }
-  }
-  for (int i = 2; i < 8; i++)
-    avgVal += sampleBuffer[i];
-
-  volt = ((float)avgVal * 5.0 / 1024 / 6);
-
-  phIst = calDelta * volt + calOffset;
-
-  vecBuffer += phIst;
-  incBuffer++;
-  if (incBuffer >= nSmooth)
-  {
-    phLast = vecBuffer / nSmooth;
-    incBuffer = 0;
-    vecBuffer = 0;
-  }
-}
-
 
 void setMenu(int keyPressed)
 {
@@ -276,24 +223,21 @@ void checkState()
       break;
 
     case CAL_PH7:
-      volt4 = volt;
+      phSonde.setVolt4(volt);
       break;
 
     case CAL_CONF:
-      volt7 = volt;
-      tempCalDelta = (7 - 4) / (volt7 - volt4);
-      tempCalOffset = 4 - (tempCalDelta * volt4);
+      phSonde.setVolt7(volt);
+      phSonde.calcDelta();
       break;
 
     case CAL_OK:
-      calDelta = tempCalDelta;
-      calOffset = tempCalOffset;
+      phSonde.applyCallibration();
       break;
     }
     break;
   }
 }
-
 void incSoll()
 {
   phSoll += 0.1;
@@ -314,5 +258,3 @@ void decThres()
   phSollThres -= 0.1;
   decFlag = false;
 }
-
-
