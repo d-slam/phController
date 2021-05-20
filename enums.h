@@ -7,16 +7,12 @@
 #define enums_h
 
 ////REALSHIZ
-
-#define ROT 1
-#define ROT_GELB 2
-#define GRUEN 3
-#define GELB 4
-
-
 typedef enum
 {
-  SYS_RUN,
+  SYS_RUN_INTERFACE,
+  SYS_RUN_RED,
+  SYS_RUN_YELLOW,
+  SYS_RUN_GREEN, 
   SYS_WAIT,
   SYS_SET_SOLL,
   SYS_SET_THRES,
@@ -25,13 +21,8 @@ typedef enum
   CAL_PH7,
   CAL_CONF,
   CAL_OK,
-  RUN_RED,
-  RUN_YELLOW,
-  RUN_GREEN, 
   VOID_DUMMY
 } state_t;
-
-
 
 
 //btnINIT============================================

@@ -24,6 +24,9 @@ public:
     lcd.clear();
     drawLeftScreen();
     switch (state)    {
+    case SYS_RUN_RED:       drawSYS_RUN_RED();          break;
+    case SYS_RUN_YELLOW:    drawSYS_RUN_YELLOW();       break;
+    case SYS_RUN_GREEN:     drawSYS_RUN_GREEN();        break;
     case SYS_WAIT:          drawSYS_WAIT();         break;
     case SYS_SET_SOLL:      drawSYS_SET_SOLL();     break;
     case SYS_SET_THRES:     drawSYS_SET_THRES();    break;
@@ -32,9 +35,6 @@ public:
     case CAL_PH7:           drawCAL_PH7();          break;
     case CAL_CONF:          drawCAL_CONF();         break;
     case CAL_OK:            drawCAL_OK();           break;
-    case RUN_RED:           drawRUN_RED();          break;
-    case RUN_YELLOW:        drawRUN_YELLOW();       break;
-    case RUN_GREEN:         drawRUN_GREEN();        break;
     case VOID_DUMMY:                                break;
     }
   }
@@ -42,17 +42,17 @@ public:
   void drawStartScreen() { drawSplashscreen("ph-Meter", 0, 0, "><(((°>", 0, 1, 1500); }
 
 private:
-  void drawRUN_RED()
+  void drawSYS_RUN_RED()
   {
     writeAtXY("Pumpt", 8, 0);
     drawSollAndThres();
   }
-  void drawRUN_YELLOW()
+  void drawSYS_RUN_YELLOW()
   {
     writeAtXY("In Range", 8, 0);
     drawSollAndThres();
   }
-  void drawRUN_GREEN()
+  void drawSYS_RUN_GREEN()
   {
     writeAtXY(
         "Halte", 8, 0);

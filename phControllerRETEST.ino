@@ -1,57 +1,71 @@
+/*
+  phController - Main 
+  Created by D. -Haxormän- Ami, 21 Mai, A. D. 2021 ACorona
+  Released into the Wild.
+*/
 #include "enums.h"
 
 //VERY!GLOBALS===============================================
-
 #define MOTORGATE 2
 
 #include "LCDScreen.h"
 #include "PhSonde.h"
 
 //GLOBALS===============================================
-
 float volt = 0.0;
-
 float phIst = 0.0;
 float phLast = 0.0;
-
 float phSoll = 5.5;
 float phSollThres = 0.5;
-
-bool incFlag = false;
-bool decFlag = false;
-
-bool btnFirstFlag = false;
 
 LCDScreen lcdScreen(&phLast, &phSoll, &phSollThres);
 
 PhSonde phSonde;
 
+bool incFlag = false;
+bool decFlag = false;
+bool btnFirstFlag = false;
+
+
 //ACHTUNG!STATMASCINE===============================================
 state_t state = SYS_WAIT; //init State
 
-unsigned char exitCheck(); // fragt die Induktionsschleife ab
-
-unsigned char zaehler;
-
+unsigned char incSYS_RUN;
 
 void stateMachine() //~~~♪callMe from main()
 {
   switch (state)  {
 
-  case SYS_RUN:
+  case SYS_RUN_INTERFACE:
+    incSYS_RUN = 4;                 //soviele durchläufe bis neuerCheck
+    doSYS_RUN_INTERFACE();          //kurz check wia IST zu SOLL steat donn subito flag auf RED,YELLOW,GREEN
+    break;
 
-    zaehler = 4;
-
-    doSYS_RUN();
+  case SYS_RUN_RED:
+    doRUN_RED();
     checkForNewButtonPress();
+    incSYS_RUN = incSYS_RUN - 1;
+    if (incSYS_RUN == 0)
+      state = SYS_RUN_INTERFACE;
+    break;
+
+  case SYS_RUN_YELLOW:
+    doRUN_YELLOW();
+    checkForNewButtonPress();
+    incSYS_RUN = incSYS_RUN - 1;
+    if (incSYS_RUN == 0)
+      state = SYS_RUN_INTERFACE;
+    break;
+
+  case SYS_RUN_GREEN:
+    doRUN_GREEN();
+    checkForNewButtonPress();
+    incSYS_RUN = incSYS_RUN - 1;
+    if (incSYS_RUN == 0)
+      state = SYS_RUN_INTERFACE;
     break;
 
   case SYS_WAIT:
-
-    zaehler = zaehler - 1;
-    if (zaehler == 0)
-      state = VOID_DUMMY;
-
     doSYS_WAIT();
     checkForNewButtonPress();
     break;
@@ -88,26 +102,9 @@ void stateMachine() //~~~♪callMe from main()
 
   case CAL_OK:
     doCAL_OK();
-    checkForNewButtonPress();
+    checkForNewButtonPress();         //eventuell delay(1500) donn state == SYS_WAIT
     break;
 
-  case RUN_RED:
-    doRUN_RED();
-    checkForNewButtonPress();
-    state = VOID_DUMMY;
-    break;
-
-  case RUN_YELLOW:
-    doRUN_YELLOW();
-    checkForNewButtonPress();
-    state = VOID_DUMMY;
-    break;
-
-  case RUN_GREEN:
-    doRUN_GREEN();
-    checkForNewButtonPress();
-    state = VOID_DUMMY;
-    break;
 
   case VOID_DUMMY: //void case, plotzholter!!
   {
@@ -122,45 +119,24 @@ void stateMachine() //~~~♪callMe from main()
     //   state == SYS_RUN;
     break;
   }
-    // if (phLast >= phSoll + phSollThres)
-    // {
-    //   RUNstate = RUN_RED;
-    //   digitalWrite(MOTORGATE, HIGH);
-    // }
-    // else if (phLast >= phSoll)
-    // {
-    //   RUNstate = RUN_YELLOW;
-    //   digitalWrite(MOTORGATE, LOW);
-    // }
-    // else if (phLast < phSoll)
-    // {
-    //   RUNstate = RUN_GREEN;
-    //   digitalWrite(MOTORGATE, LOW);
-    // }
-  }
 
+  }
   lcdScreen.redraw(state);
+
 }
 
 //stateMaschine-doFnkBlock//////////////////////////////////
-void doSYS_RUN()
+void doSYS_RUN_INTERFACE()
 {
-  digitalWrite(MOTORGATE, LOW);
   phLast = phSonde.getPhIst();
+  if      (phLast >= phSoll + phSollThres)    {    state = SYS_RUN_RED;     }
+  else if (phLast >= phSoll)                  {    state = SYS_RUN_YELLOW;  }
+  else if (phLast < phSoll)                   {    state = SYS_RUN_GREEN;   }
 }
 
-void doRUN_RED()
-{
-  digitalWrite(MOTORGATE, HIGH);
-}
-void doRUN_YELLOW()
-{
-  digitalWrite(MOTORGATE, LOW);
-}
-void doRUN_GREEN()
-{
-  digitalWrite(MOTORGATE, LOW);
-}
+void doRUN_RED()    {  digitalWrite(MOTORGATE, HIGH);   }
+void doRUN_YELLOW() {  digitalWrite(MOTORGATE, LOW);    }
+void doRUN_GREEN()  {  digitalWrite(MOTORGATE, LOW);    }
 
 void doSYS_WAIT()
 {
@@ -224,11 +200,11 @@ void checkForNewButtonPress()
   case btnNONE:    btnFirstFlag = false;    break;
 
   //wenn BUTTON, check ob schun aknowledged->donn break, SUSCHT resetFLAG u DOSHIT()
-  case btnRIGHT:       if (btnFirstFlag == false)      break;
-  case btnLEFT:    if (btnFirstFlag == false)      break;
-  case btnSELECT:    if (btnFirstFlag == false)      break;
-  case btnUP:    if (btnFirstFlag == false)      break;
-  case btnDOWN:    if (btnFirstFlag == false)      break;
+  case btnRIGHT:        if (btnFirstFlag == false)      break;
+  case btnLEFT:         if (btnFirstFlag == false)      break;
+  case btnSELECT:       if (btnFirstFlag == false)      break;
+  case btnUP:           if (btnFirstFlag == false)      break;
+  case btnDOWN:         if (btnFirstFlag == false)      break;
     btnFirstFlag = false; //resetFLAG
     doNewButton(lcd_key);    //DOSHIT
     break;
@@ -240,13 +216,13 @@ void doNewButton(int keyPressed)
 {
   switch (state)
   {
-  case SYS_RUN:
+  case SYS_RUN_INTERFACE:
     if (keyPressed == btnRIGHT)      state = SYS_WAIT;
     break;
 
   case SYS_WAIT:
     if (keyPressed == btnRIGHT)      state = SYS_SET_SOLL;
-    if (keyPressed == btnLEFT)      state = SYS_RUN;
+    if (keyPressed == btnLEFT)      state = SYS_RUN_INTERFACE;
     break;
 
   case SYS_SET_SOLL:
@@ -287,6 +263,12 @@ void doNewButton(int keyPressed)
   }
 }
 
+void incSoll() { phSoll += 0.1; }
+void decSoll() { phSoll -= 0.1; }
+void incThres() { phSollThres += 0.1; }
+void decThres() { phSollThres -= 0.1; }
+
+
 //SETUP===============================================
 void setup()
 {
@@ -303,7 +285,3 @@ void loop()
 
 }
 
-void incSoll() { phSoll += 0.1; }
-void decSoll() { phSoll -= 0.1; }
-void incThres() { phSollThres += 0.1; }
-void decThres() { phSollThres -= 0.1; }
