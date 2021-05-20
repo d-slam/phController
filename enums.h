@@ -26,7 +26,6 @@ typedef enum
 
 
 //btnINIT============================================
-
 #define btnRIGHT 0
 #define btnUP 1
 #define btnDOWN 2

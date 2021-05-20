@@ -26,16 +26,36 @@ bool incFlag = false;
 bool decFlag = false;
 bool btnFirstFlag = false;
 
-
-//ACHTUNG!STATMASCINE===============================================
 state_t state = SYS_WAIT; //init State
 
-unsigned char incSYS_RUN;
+// unsigned char incSYS_RUN;
+int incSYS_RUN = 0;
 
+
+
+
+//SETUP===============================================
+void setup()
+{
+  pinMode(MOTORGATE, OUTPUT);
+  Serial.begin(9600);
+  Serial.println("Serial hüü!");
+  lcdScreen.drawStartScreen();
+
+}
+
+//LOOP==========================================================
+void loop()
+{
+  stateMachine();
+}
+
+
+//ACHTUNG!STATMASCINE===============================================
 void stateMachine() //~~~♪callMe from main()
 {
   switch (state)  {
-
+//RUN================================
   case SYS_RUN_INTERFACE:
     incSYS_RUN = 4;                 //soviele durchläufe bis neuerCheck
     doSYS_RUN_INTERFACE();          //kurz check wia IST zu SOLL steat donn subito flag auf RED,YELLOW,GREEN
@@ -65,11 +85,12 @@ void stateMachine() //~~~♪callMe from main()
       state = SYS_RUN_INTERFACE;
     break;
 
+//WAIT================================
   case SYS_WAIT:
     doSYS_WAIT();
     checkForNewButtonPress();
     break;
-
+//SET================================
   case SYS_SET_SOLL:
     doSYS_SET_SOLL();
     checkForNewButtonPress();
@@ -80,6 +101,7 @@ void stateMachine() //~~~♪callMe from main()
     checkForNewButtonPress();
     break;
 
+//CAL================================
   case SYS_CAL:
     doSYS_CAL();
     checkForNewButtonPress();
@@ -105,25 +127,11 @@ void stateMachine() //~~~♪callMe from main()
     checkForNewButtonPress();         //eventuell delay(1500) donn state == SYS_WAIT
     break;
 
-
-  case VOID_DUMMY: //void case, plotzholter!!
-  {
-    doVOID_DUMMY();
-    // // Ampel1(ROT);
-    // // Ampel2(GRUEN);
-
-    // lcdScreen.redraw(state);
-    // phLast = phSonde.getPhIst();
-
-    // if (exitCheck())
-    //   state == SYS_RUN;
-    break;
-  }
-
   }
   lcdScreen.redraw(state);
 
 }
+//MyMethodes==========================================================
 
 //stateMaschine-doFnkBlock//////////////////////////////////
 void doSYS_RUN_INTERFACE()
@@ -134,9 +142,9 @@ void doSYS_RUN_INTERFACE()
   else if (phLast < phSoll)                   {    state = SYS_RUN_GREEN;   }
 }
 
-void doRUN_RED()    {  digitalWrite(MOTORGATE, HIGH);   }
-void doRUN_YELLOW() {  digitalWrite(MOTORGATE, LOW);    }
-void doRUN_GREEN()  {  digitalWrite(MOTORGATE, LOW);    }
+void doRUN_RED()                              {    digitalWrite(MOTORGATE, HIGH);   }
+void doRUN_YELLOW()                           {    digitalWrite(MOTORGATE, LOW);    }
+void doRUN_GREEN()                            {    digitalWrite(MOTORGATE, LOW);    }
 
 void doSYS_WAIT()
 {
@@ -155,39 +163,22 @@ void doSYS_SET_THRES()
   if (decFlag == true)    decThres();
 }
 
-void doSYS_CAL()
-{
-
-}
-
-void doCAL_PH4()
-{
-  phLast = phSonde.getPhIst();
-
-}
+void doSYS_CAL(){}
+void doCAL_PH4()                    {  phLast = phSonde.getPhIst();}
 void doCAL_PH7()
 {
   phLast = phSonde.getPhIst();
-
   phSonde.setVolt4(volt);
-
 }
 void doCAL_CONF()
 {
   phSonde.setVolt7(volt);
   phSonde.calcDelta();
-
 }
-void doCAL_OK()
-{
-  phSonde.applyCallibration();
-}
+void doCAL_OK()                    { phSonde.applyCallibration(); }
 
-void doVOID_DUMMY()
-{
-}
 
-//MyMethodes==========================================================
+
 
 //BtnInterface===============================================
 void checkForNewButtonPress()
@@ -267,21 +258,3 @@ void incSoll() { phSoll += 0.1; }
 void decSoll() { phSoll -= 0.1; }
 void incThres() { phSollThres += 0.1; }
 void decThres() { phSollThres -= 0.1; }
-
-
-//SETUP===============================================
-void setup()
-{
-  pinMode(MOTORGATE, OUTPUT);
-  Serial.begin(9600);
-  Serial.println("Serial hüü!");
-  lcdScreen.drawStartScreen();
-}
-
-//LOOP==========================================================
-void loop()
-{
-  stateMachine();
-
-}
-
