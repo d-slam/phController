@@ -16,49 +16,28 @@
 void Ampel1(unsigned char Farbe); // schaltet Ampel1 auf eine Farbe
 void Ampel2(unsigned char Farbe); // schaltet Ampel2 auf eine Farbe
 
-unsigned char abfragee(); // fragt die Induktionsschleife ab
+
 typedef enum
 {
-  NORDSUED_ROTGELB,
-  NORDSUED_GRUEN,
-  NORDSUED_GELB,
-  ALLE_ROT_1,
-  OSTWEST_ROTGELB,
-  OSTWEST_GRUEN,
-  OSTWEST_GELB,
-  ALLE_ROT_2,
-  WARTE_NORDSUED
-} state_t;
-
-
-
-
-
-////OLT
-typedef enum stateSys_e
-{
+  SYSDUMMY,
   SYS_RUN,
   SYS_WAIT,
   SYS_SET_SOLL,
   SYS_SET_THRES,
-  SYS_CAL
-} statesSys_t;
-
-typedef enum statesCal_e
-{
+  SYS_CAL,
   CAL_START,
   CAL_PH4,
   CAL_PH7,
   CAL_CONF,
-  CAL_OK
-} statesCal_t;
-
-typedef enum statesRun_e
-{
+  CAL_OK,
   RUN_RED,
   RUN_YELLOW,
   RUN_GREEN
-} statesRun_t;
+
+} state_t;
+
+
+
 
 //btnINIT============================================
 

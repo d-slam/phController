@@ -22,54 +22,62 @@ public:
     lcd.begin(16, 2);
   }
 
-  void redraw(const statesSys_t SYSstate, const statesCal_t CALstate, const statesRun_t RUNstate)
+  // void redraw(const statesSys_t SYSstate, const statesCal_t CALstate, const statesRun_t RUNstate)
+  void redraw(const state_t state)
   {
     lcd.clear();
     drawLeftScreen();
-    switch (SYSstate)
+    
+    switch (state)
     {
-    case SYS_RUN:
-      switch (RUNstate)
-      {
-      case RUN_RED:
-        drawRUN_RED();
-        break;
-      case RUN_YELLOW:
-        drawRUN_YELLOW();
-        break;
-      case RUN_GREEN:
-        drawRUN_GREEN();
-        break;
-      }
+    case SYSDUMMY:
       break;
+
     case SYS_WAIT:
       drawSYS_WAIT();
       break;
+
     case SYS_SET_SOLL:
       drawSYS_SET_SOLL();
       break;
+
     case SYS_SET_THRES:
       drawSYS_SET_THRES();
       break;
+
     case SYS_CAL:
-      switch (CALstate)
-      {
-      case CAL_START:
-        drawCAL_START();
-        break;
-      case CAL_PH4:
-        drawCAL_PH4();
-        break;
-      case CAL_PH7:
-        drawCAL_PH7();
-        break;
-      case CAL_CONF:
-        drawCAL_CONF();
-        break;
-      case CAL_OK:
-        drawCAL_OK();
-        break;
-      }
+      break;
+
+    case CAL_START:
+      drawCAL_START();
+      break;
+
+    case CAL_PH4:
+      drawCAL_PH4();
+      break;
+
+    case CAL_PH7:
+      drawCAL_PH7();
+      break;
+
+    case CAL_CONF:
+      drawCAL_CONF();
+      break;
+
+    case CAL_OK:
+      drawCAL_OK();
+      break;
+
+    case RUN_RED:
+      drawRUN_RED();
+      break;
+
+    case RUN_YELLOW:
+      drawRUN_YELLOW();
+      break;
+
+    case RUN_GREEN:
+      drawRUN_GREEN();
       break;
     }
   }
@@ -173,6 +181,7 @@ private:
     lcd.setCursor(x, y);
     lcd.print(value);
   }
+
   float *pPhLast, *pPhSoll, *pPhSollThres;
 };
 #endif

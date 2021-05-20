@@ -24,85 +24,106 @@ bool btnPrellFlag = false;
 
 int incStateCheck = 0;
 
-statesSys_t SYSstate = SYS_WAIT;
-statesCal_t CALstate = CAL_START;
-statesRun_t RUNstate = RUN_GREEN;
+// statesSys_t SYSstate = SYS_WAIT;
+// statesCal_t CALstate = CAL_START;
+// statesRun_t RUNstate = RUN_GREEN;
 
 LCDScreen lcdScreen(&phLast, &phSoll, &phSollThres);
 
 PhSonde phSonde;
 
-//ACHTUNGSTATMASCINE===============================================
+//ACHTUNG!STATMASCINE===============================================
+state_t state = SYS_WAIT; //init State
 
-state_t state = ALLE_ROT_1;
+unsigned char exitCheck(); // fragt die Induktionsschleife ab
 unsigned char zaehler;
 
-void stateMachine() //~~~callMe from main()
+void stateMachine() //~~~♪callMe from main()
 {
   switch (state)
   {
-  case OSTWEST_GRUEN:
+  case SYS_RUN:
     Ampel1(ROT);
     Ampel2(GRUEN);
-    if (abfragee())
-    {
-      state = OSTWEST_GELB;
-    }
+    if (exitCheck())
+      state == SYSDUMMY;
+
     break;
 
-  case OSTWEST_GELB:
-    Ampel1(ROT);
-    Ampel2(GELB);
-    state = ALLES_ROT_1;
+  case SYS_WAIT:
+    zaehler = zaehler - 1;
+    if (zaehler == 0)
+      state = SYSDUMMY;
     break;
 
-  case ALLES_ROT_1:
+  case SYS_SET_SOLL:
     Ampel1(ROT);
     Ampel2(ROT);
-    state = NORDSUED_ROTGELB;
+    state = SYSDUMMY;
     break;
 
-  case NORDSUED_ROTGELB:
+  case SYS_SET_THRES:
     Ampel1(ROT_GELB);
     Ampel2(ROT);
-    state = NORDSUED_GRUEN;
+    state = SYSDUMMY;
     break;
 
-  case NORDSUED_GRUEN:
+  case SYS_CAL:
     Ampel1(GRUEN);
     Ampel2(ROT);
     zaehler = 4;
-    state = WARTE_NORDSUED;
+    state = SYSDUMMY;
     break;
 
-  case NORDSUED_GELB:
+  case CAL_START:
     Ampel1(GELB);
     Ampel2(ROT);
-    state = ALLES_ROT_2;
+    state = SYSDUMMY;
     break;
 
-  case ALLES_ROT_2:
+  case CAL_PH4:
     Ampel1(ROT);
     Ampel2(ROT);
-    state = OSTWEST_ROTGELB;
+    state = SYSDUMMY;
     break;
 
-  case OSTWEST_ROTGELB:
+  case CAL_PH7:
     Ampel1(ROT);
     Ampel2(ROT_GELB);
-    state = OSTWEST_GRUEN;
+    state = SYSDUMMY;
     break;
 
-  case WARTE_NORDSUED:
-    zaehler = zaehler - 1;
-    if (zaehler == 0)
-      state = NORDSUED_GELB;
+  case CAL_CONF:
+    Ampel1(ROT);
+    Ampel2(ROT_GELB);
+    state = SYSDUMMY;
+    break;
+
+  case CAL_OK:
+    Ampel1(ROT);
+    Ampel2(ROT_GELB);
+    state = SYSDUMMY;
+    break;
+
+  case RUN_RED:
+    Ampel1(ROT);
+    Ampel2(ROT_GELB);
+    state = SYSDUMMY;
+    break;
+
+  case RUN_YELLOW:
+    Ampel1(ROT);
+    Ampel2(ROT_GELB);
+    state = SYSDUMMY;
+    break;
+
+  case RUN_GREEN:
+    Ampel1(ROT);
+    Ampel2(ROT_GELB);
+    state = SYSDUMMY;
     break;
   }
 }
-
-
-
 
 //SETUP===============================================
 void setup()
@@ -116,38 +137,29 @@ void setup()
 void loop()
 {
 
+  // stateMachine();
+
   phLast = phSonde.getPhIst();
 
-  lcdScreen.redraw(SYSstate, CALstate, RUNstate);
+  lcdScreen.redraw(state);
 
-  checkState();
+  // checkState();
 
-  checkButtons();
+  // checkButtons();
 }
+
 //MyMethodes==========================================================
-
-
 void checkState()
 {
-  incStateCheck = 0;
-  switch (SYSstate)
+  // incStateCheck = 0;
+
+  switch (state)
   {
+
+  case SYSDUMMY:
+    break;
+
   case SYS_RUN:
-    if (phLast >= phSoll + phSollThres)
-    {
-      RUNstate = RUN_RED;
-      digitalWrite(MOTORGATE, HIGH);
-    }
-    else if (phLast >= phSoll)
-    {
-      RUNstate = RUN_YELLOW;
-      digitalWrite(MOTORGATE, LOW);
-    }
-    else if (phLast < phSoll)
-    {
-      RUNstate = RUN_GREEN;
-      digitalWrite(MOTORGATE, LOW);
-    }
     break;
 
   case SYS_WAIT:
@@ -169,106 +181,123 @@ void checkState()
     break;
 
   case SYS_CAL:
+    break;
 
-    switch (CALstate)
-    {
-    case CAL_START:
-      break;
+  case CAL_START:
+    break;
 
-    case CAL_PH4:
-      break;
+  case CAL_PH4:
+    break;
 
-    case CAL_PH7:
-      phSonde.setVolt4(volt);
-      break;
+  case CAL_PH7:
+    phSonde.setVolt4(volt);
+    break;
 
-    case CAL_CONF:
-      phSonde.setVolt7(volt);
-      phSonde.calcDelta();
-      break;
+  case CAL_CONF:
+    phSonde.setVolt7(volt);
+    phSonde.calcDelta();
+    break;
 
-    case CAL_OK:
-      phSonde.applyCallibration();
-      break;
-    }
+  case CAL_OK:
+    phSonde.applyCallibration();
+    break;
+
+    // if (phLast >= phSoll + phSollThres)
+    // {
+    //   RUNstate = RUN_RED;
+    //   digitalWrite(MOTORGATE, HIGH);
+    // }
+    // else if (phLast >= phSoll)
+    // {
+    //   RUNstate = RUN_YELLOW;
+    //   digitalWrite(MOTORGATE, LOW);
+    // }
+    // else if (phLast < phSoll)
+    // {
+    //   RUNstate = RUN_GREEN;
+    //   digitalWrite(MOTORGATE, LOW);
+    // }
+
+  case RUN_RED:
+    break;
+
+  case RUN_YELLOW:
+    break;
+
+  case RUN_GREEN:
     break;
   }
 }
-
 
 void setMenu(int keyPressed)
 {
-  switch (SYSstate)
-  {
-  case SYS_RUN:
-    if (keyPressed == btnRIGHT)
-      SYSstate = SYS_WAIT;
-    break;
+  // switch (state)
+  // {
+  // case SYS_RUN:
+  //   if (keyPressed == btnRIGHT)
+  //     SYSstate = SYS_WAIT;
+  //   break;
 
-  case SYS_WAIT:
-    if (keyPressed == btnRIGHT)
-      SYSstate = SYS_SET_SOLL;
-    if (keyPressed == btnLEFT)
-      SYSstate = SYS_RUN;
-    break;
+  // case SYS_WAIT:
+  //   if (keyPressed == btnRIGHT)
+  //     SYSstate = SYS_SET_SOLL;
+  //   if (keyPressed == btnLEFT)
+  //     SYSstate = SYS_RUN;
+  //   break;
 
-  case SYS_SET_SOLL:
-    if (keyPressed == btnRIGHT)
-      SYSstate = SYS_SET_THRES;
-    if (keyPressed == btnLEFT)
-      SYSstate = SYS_WAIT;
-    if (keyPressed == btnUP)
-      incFlag = true;
-    if (keyPressed == btnDOWN)
-      decFlag = true;
-    break;
+  // case SYS_SET_SOLL:
+  //   if (keyPressed == btnRIGHT)
+  //     SYSstate = SYS_SET_THRES;
+  //   if (keyPressed == btnLEFT)
+  //     SYSstate = SYS_WAIT;
+  //   if (keyPressed == btnUP)
+  //     incFlag = true;
+  //   if (keyPressed == btnDOWN)
+  //     decFlag = true;
+  //   break;
 
-  case SYS_SET_THRES:
-    if (keyPressed == btnRIGHT)
-      SYSstate = SYS_CAL;
-    if (keyPressed == btnLEFT)
-      SYSstate = SYS_SET_SOLL;
-    if (keyPressed == btnUP)
-      incFlag = true;
-    if (keyPressed == btnDOWN)
-      decFlag = true;
-    break;
+  // case SYS_SET_THRES:
+  //   if (keyPressed == btnRIGHT)
+  //     SYSstate = SYS_CAL;
+  //   if (keyPressed == btnLEFT)
+  //     SYSstate = SYS_SET_SOLL;
+  //   if (keyPressed == btnUP)
+  //     incFlag = true;
+  //   if (keyPressed == btnDOWN)
+  //     decFlag = true;
+  //   break;
 
-  case SYS_CAL:
-    switch (CALstate)
-    {
-    case CAL_START:
-      if (keyPressed == btnLEFT)
-        SYSstate = SYS_SET_THRES;
-      if (keyPressed == btnSELECT)
-        CALstate = CAL_PH4;
-      break;
+  // case CAL_START:
+  //   if (keyPressed == btnLEFT)
+  //     SYSstate = SYS_SET_THRES;
+  //   if (keyPressed == btnSELECT)
+  //     CALstate = CAL_PH4;
+  //   break;
 
-    case CAL_PH4:
-      if (keyPressed == btnSELECT)
-        CALstate = CAL_PH7;
-      break;
+  // case CAL_PH4:
+  //   if (keyPressed == btnSELECT)
+  //     CALstate = CAL_PH7;
+  //   break;
 
-    case CAL_PH7:
-      if (keyPressed == btnSELECT)
-        CALstate = CAL_CONF;
-      break;
+  // case CAL_PH7:
+  //   if (keyPressed == btnSELECT)
+  //     CALstate = CAL_CONF;
+  //   break;
 
-    case CAL_CONF:
-      if (keyPressed == btnSELECT)
-        CALstate = CAL_OK;
-      if (keyPressed == btnLEFT)
-        CALstate = CAL_START;
-      break;
+  // case CAL_CONF:
+  //   if (keyPressed == btnSELECT)
+  //     CALstate = CAL_OK;
+  //   if (keyPressed == btnLEFT)
+  //     CALstate = CAL_START;
+  //   break;
 
-    case CAL_OK:
-      CALstate = CAL_START;
-      SYSstate = SYS_WAIT;
-      break;
-    }
-    break;
-  }
+  // case CAL_OK:
+  //   CALstate = CAL_START;
+  //   SYSstate = SYS_WAIT;
+  //   break;
+  // }
 }
+
 void checkButtons()
 {
   lcd_key = read_LCD_buttons();
