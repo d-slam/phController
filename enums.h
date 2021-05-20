@@ -13,27 +13,22 @@
 #define GRUEN 3
 #define GELB 4
 
-void Ampel1(unsigned char Farbe); // schaltet Ampel1 auf eine Farbe
-void Ampel2(unsigned char Farbe); // schaltet Ampel2 auf eine Farbe
-
 
 typedef enum
 {
-  SYS_DUMMY,
   SYS_RUN,
   SYS_WAIT,
   SYS_SET_SOLL,
   SYS_SET_THRES,
   SYS_CAL,
-  CAL_START,
   CAL_PH4,
   CAL_PH7,
   CAL_CONF,
   CAL_OK,
   RUN_RED,
   RUN_YELLOW,
-  RUN_GREEN
-
+  RUN_GREEN, 
+  VOID_DUMMY
 } state_t;
 
 

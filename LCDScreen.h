@@ -13,72 +13,29 @@
 //LCD_INIT============================================
 LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
 
-class LCDScreen
-{
+class LCDScreen {
 public:
   LCDScreen(float *_phLast, float *_phSoll, float *_phSollThres)
       : pPhLast(_phLast), pPhSoll(_phSoll), pPhSollThres(_phSollThres)
-  {
-    lcd.begin(16, 2);
-  }
+            {    lcd.begin(16, 2);  }
 
   // void redraw(const statesSys_t SYSstate, const statesCal_t CALstate, const statesRun_t RUNstate)
-  void redraw(const state_t state)
-  {
+  void redraw(const state_t state)  {
     lcd.clear();
     drawLeftScreen();
-
-    switch (state)
-    {
-    case SYS_DUMMY:
-      break;
-
-    case SYS_WAIT:
-      drawSYS_WAIT();
-      break;
-
-    case SYS_SET_SOLL:
-      drawSYS_SET_SOLL();
-      break;
-
-    case SYS_SET_THRES:
-      drawSYS_SET_THRES();
-      break;
-
-    case SYS_CAL:
-      break;
-
-    case CAL_START:
-      drawCAL_START();
-      break;
-
-    case CAL_PH4:
-      drawCAL_PH4();
-      break;
-
-    case CAL_PH7:
-      drawCAL_PH7();
-      break;
-
-    case CAL_CONF:
-      drawCAL_CONF();
-      break;
-
-    case CAL_OK:
-      drawCAL_OK();
-      break;
-
-    case RUN_RED:
-      drawRUN_RED();
-      break;
-
-    case RUN_YELLOW:
-      drawRUN_YELLOW();
-      break;
-
-    case RUN_GREEN:
-      drawRUN_GREEN();
-      break;
+    switch (state)    {
+    case SYS_WAIT:          drawSYS_WAIT();         break;
+    case SYS_SET_SOLL:      drawSYS_SET_SOLL();     break;
+    case SYS_SET_THRES:     drawSYS_SET_THRES();    break;
+    case SYS_CAL:           drawSYS_CAL();          break;
+    case CAL_PH4:           drawCAL_PH4();          break;
+    case CAL_PH7:           drawCAL_PH7();          break;
+    case CAL_CONF:          drawCAL_CONF();         break;
+    case CAL_OK:            drawCAL_OK();           break;
+    case RUN_RED:           drawRUN_RED();          break;
+    case RUN_YELLOW:        drawRUN_YELLOW();       break;
+    case RUN_GREEN:         drawRUN_GREEN();        break;
+    case VOID_DUMMY:                                break;
     }
   }
 
@@ -126,7 +83,7 @@ private:
     writeAtXY("+", 12, 1);
     writeFloatAtXY(*pPhSollThres, 13, 1);
   }
-  void drawCAL_START()
+  void drawSYS_CAL()
   {
     lcd.clear();
     writeAtXY("Start Cal?", 6, 0);
