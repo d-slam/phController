@@ -19,7 +19,7 @@ void Ampel2(unsigned char Farbe); // schaltet Ampel2 auf eine Farbe
 
 typedef enum
 {
-  SYSDUMMY,
+  SYS_DUMMY,
   SYS_RUN,
   SYS_WAIT,
   SYS_SET_SOLL,

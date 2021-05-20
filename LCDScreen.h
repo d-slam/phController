@@ -27,10 +27,10 @@ public:
   {
     lcd.clear();
     drawLeftScreen();
-    
+
     switch (state)
     {
-    case SYSDUMMY:
+    case SYS_DUMMY:
       break;
 
     case SYS_WAIT:
