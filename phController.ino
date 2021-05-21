@@ -6,10 +6,13 @@
 #include "enums.h"
 
 //VERY!GLOBALS===============================================
-#define MOTORGATE 2
 
 #include "LCDScreen.h"
+#include "InputButtons.h"
 #include "PhSonde.h"
+
+
+#define MOTORGATE 2
 
 //GLOBALS===============================================
 float volt = 0.0;
@@ -44,7 +47,7 @@ void setup()
 void loop()
 {
   stateMachine();
-  // delay(20);
+  delay(20);
 }
 
 //MyMethodes==========================================================
