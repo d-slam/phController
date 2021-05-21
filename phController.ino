@@ -37,7 +37,7 @@ int* pBtnPressed;
 
 void checkForNewButtonPress()                 //START von dor mascihine....wenn net geprellt, gebmor in keypointer weiter an SWITCHSTATE
 {
-  int bufferKeypad = inputButtons.read_LCD_buttons(); 
+  int bufferKeypad = read_LCD_buttons(); 
   pBtnPressed = &bufferKeypad;
 
   switch (bufferKeypad)       //WOOOS BUFFERN!!! OB MIR WOS BUFFERN??? ÜBERHAUPT
