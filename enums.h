@@ -24,7 +24,13 @@ typedef enum
   VOID_DUMMY
 } state_t;
 
-
+//btnINIT============================================
+#define btnRIGHT 0
+#define btnUP 1
+#define btnDOWN 2
+#define btnLEFT 3
+#define btnSELECT 4
+#define btnNONE 5
 
 
 #endif

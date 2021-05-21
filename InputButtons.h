@@ -6,17 +6,12 @@
 #ifndef InputButtons_h
 #define InputButtons_h
 
-//btnINIT============================================
-#define btnRIGHT 0
-#define btnUP 1
-#define btnDOWN 2
-#define btnLEFT 3
-#define btnSELECT 4
-#define btnNONE 5
+
 
 
 int lcd_key = 0;
 int adc_key_in = 0;
+
 int read_LCD_buttons()
 {
   adc_key_in = analogRead(0); // read the value from the sensor
@@ -34,12 +29,6 @@ int read_LCD_buttons()
     return btnSELECT;
   return btnNONE; // when all others fail, return this...
 }
-
-
-
-
-
-
 
 
 
