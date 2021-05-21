@@ -1,17 +1,17 @@
+///phController////////><(((°>//////><(((°>////////><(((°>/////
 /*
   phController - Main 
-  Created by D. -Haxormän- Ami, 21 Mai, A. D. 2021 ACorona
+  Created by D. -Tomätebauer- Ami, 21 Mæi, A. D. 2021 ACorona
   Released into the Wild.
 */
+//////////////////////////////////////////////////////////////
 #include "enums.h"
 
 //MENUMAP===============================================
 state_t state = SYS_WAIT;     //init State
-void switchState(int* pButton)                //dereferenziert in keypointer und switcht/callt di inc/dec (!!!!!!)
+void switchState(int* pButton)                
 {
-
-  switch (state)
-  {
+  switch (state)  {
 
   case SYS_RUN_INTERFACE:     if (*pButton == btnRIGHT)      state = SYS_WAIT;    break;
   case SYS_RUN_RED:           if (*pButton == btnRIGHT)      state = SYS_WAIT;    break;
@@ -62,12 +62,10 @@ void switchState(int* pButton)                //dereferenziert in keypointer und
 
 }
 
-
 //VERY!GLOBALS===============================================
 #include "LCDScreen.h"
 #include "InputButtons.h"
 #include "PhSonde.h"
-
 
 //GLOBALS===============================================
 float volt = 0.0;
