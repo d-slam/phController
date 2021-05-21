@@ -96,9 +96,9 @@ void setup()
   Serial.begin(9600);
   Serial.println("Serial hüü!");
 
-  Serial.println((int)pSwitchState);
+  // Serial.println("Adress swtichState bei setup()");
   pSwitchState = &switchState;                        //wäms die &switchState auf fkt pointer   
-  Serial.println((int)pSwitchState);    //scheint zu loden
+  // Serial.println((int)pSwitchState);    //scheint zu loden
 
 
 
@@ -127,7 +127,7 @@ void stateMachine() //~~~♪callMe from main()
     break;
 
   case SYS_RUN_RED:
-  Serial.println("hey run red");
+  // Serial.println("hey run red");
     doRUN_RED();
     inputButtons.checkForNewButtonPress();
 
@@ -226,13 +226,13 @@ void doSYS_WAIT()
 
 void doSYS_SET_SOLL()
 {
-  if (inputButtons.btnNewIncAllowedFlag == true)    incSoll();
-  if (inputButtons.btnNewDecAllowedFlag == true)    decSoll();
+  if (inputButtons.aknIncFlag() == true)    incSoll();
+  if (inputButtons.aknDecFlag() == true)    decSoll();
 }
 void doSYS_SET_THRES()
 {
-  if (inputButtons.btnNewIncAllowedFlag == true)    incThres();
-  if (inputButtons.btnNewDecAllowedFlag == true)    decThres();
+  if (inputButtons.aknIncFlag() == true)    incThres();
+  if (inputButtons.aknDecFlag() == true)    decThres();
 }
 
 void doSYS_CAL(){}

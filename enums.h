@@ -24,7 +24,7 @@ typedef enum
   VOID_DUMMY
 } state_t;
 
-//btnINIT============================================
+//btnINIT====================Müssen do bleiben suscht siegi sie net in dor menumap
 #define btnRIGHT 0
 #define btnUP 1
 #define btnDOWN 2
