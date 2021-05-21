@@ -203,12 +203,15 @@ void stateMachine() //~~~♪callMe from main()
 }
 
 //stateMaschine-doFnkBlock//////////////////////////////////
-void doSYS_RUN_INTERFACE()
+//wenn ph nan, bleiber im interface hängen...momentan hupfter auf GREEN, ober magari a eigerner SYS_RUN_ERROR war net schlecht
+////////OOOOODER cal isch kaputt, schmeis olm NA--->erster sell checkn
+void doSYS_RUN_INTERFACE()          
 {
   phLast = phSonde.getPhIst();
   if      (phLast >= phSoll + phSollThres)    {    state = SYS_RUN_RED;     }
   else if (phLast >= phSoll)                  {    state = SYS_RUN_YELLOW;  }
   else if (phLast < phSoll)                   {    state = SYS_RUN_GREEN;   }
+  //else                                        {    state = SYS_RUN_GREEN;   }         //error case
 }
 
 void doRUN_RED()                              {    digitalWrite(MOTORGATE, HIGH);   }
