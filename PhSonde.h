@@ -6,8 +6,6 @@
 #ifndef PhSonde_h
 #define PhSonde_h
 
-#define RX_PH A1
-
 class PhSonde
 {
 public:

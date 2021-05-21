@@ -32,5 +32,11 @@ typedef enum
 #define btnSELECT 4
 #define btnNONE 5
 
+//sensorDEFS====================
+#define RX_PH A1
+
+//aktorDEFS====================
+#define MOTORGATE 2
+
 
 #endif
