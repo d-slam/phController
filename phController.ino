@@ -8,8 +8,10 @@
 
 //MENUMAP===============================================
 state_t state = SYS_WAIT;     //init State
+
 void switchState(int* pButton)                //dereferenziert in keypointer und switcht/callt di inc/dec (!!!!!!)
 {
+
   switch (state)
   {
 
@@ -19,49 +21,48 @@ void switchState(int* pButton)                //dereferenziert in keypointer und
   case SYS_RUN_GREEN:         if (*pButton == btnRIGHT)      state = SYS_WAIT;    break;
 
   case SYS_WAIT:
-    if (*pButton == btnRIGHT)      state = SYS_SET_SOLL;
-    if (*pButton == btnLEFT)      state = SYS_RUN_INTERFACE;
+    if (*pButton == btnRIGHT)                               state = SYS_SET_SOLL;
+    if (*pButton == btnLEFT)                                state = SYS_RUN_INTERFACE;
     break;
 
   case SYS_SET_SOLL:
-    if (*pButton == btnRIGHT)      state = SYS_SET_THRES;
-    if (*pButton == btnLEFT)      state = SYS_WAIT;
-    if (*pButton == btnUP)      incSoll();
-    if (*pButton == btnDOWN)      decSoll();
+    if (*pButton == btnRIGHT)                               state = SYS_SET_THRES;
+    if (*pButton == btnLEFT)                                state = SYS_WAIT;
+    if (*pButton == btnUP)                                          incSoll();
+    if (*pButton == btnDOWN)                                        decSoll();
     break;
 
   case SYS_SET_THRES:
-    if (*pButton == btnRIGHT)      state = SYS_CAL;
-    if (*pButton == btnLEFT)      state = SYS_SET_SOLL;
-    if (*pButton == btnUP)      incThres();
-    if (*pButton == btnDOWN)      decThres();
+    if (*pButton == btnRIGHT)                               state = SYS_CAL;
+    if (*pButton == btnLEFT)                                state = SYS_SET_SOLL;
+    if (*pButton == btnUP)                                          incThres();
+    if (*pButton == btnDOWN)                                        decThres();
     break;
 
   case SYS_CAL:
-    if (*pButton == btnLEFT)      state = SYS_SET_THRES;
-    if (*pButton == btnSELECT)      state = CAL_PH4;
+    if (*pButton == btnLEFT)                              state = SYS_SET_THRES;
+    if (*pButton == btnSELECT)                            state = CAL_PH4;
     break;
 
   case CAL_PH4:
-    if (*pButton == btnSELECT)      state = CAL_PH7;
-    if (*pButton == btnLEFT)      state = SYS_CAL;
+    if (*pButton == btnSELECT)                            state = CAL_PH7;
+    if (*pButton == btnLEFT)                              state = SYS_CAL;
     break;
 
   case CAL_PH7:
-    if (*pButton == btnSELECT)      state = CAL_CONF;
-    if (*pButton == btnLEFT)      state = SYS_CAL;
+    if (*pButton == btnSELECT)                            state = CAL_CONF;
+    if (*pButton == btnLEFT)                              state = SYS_CAL;
     break;
 
   case CAL_CONF:
-    if (*pButton == btnSELECT)      state = CAL_OK;
-    if (*pButton == btnLEFT)      state = SYS_CAL;
+    if (*pButton == btnSELECT)                            state = CAL_OK;
+    if (*pButton == btnLEFT)                              state = SYS_CAL;
     break;
 
-  case CAL_OK:    state = SYS_WAIT;    break;
+  case CAL_OK:                                            state = SYS_WAIT;    break;
   }
-}
 
-void (*pSwitchState)(int*);                 //fkt pointer auf die switchState
+}
 
 
 //VERY!GLOBALS===============================================
@@ -84,77 +85,17 @@ LCDScreen lcdScreen(&phLast, &phSoll, &phSollThres);
 PhSonde phSonde;
 
 //BUTTONSHIT===============================================
-InputButtons inputButtons(pSwitchState);                    //fkt pointer gebmor in contructor mit
+InputButtons inputButtons;                    //fkt pointer gebmor in contructor mit
 
-bool btnNewIncAllowedFlag = false;
-bool btnNewDecAllowedFlag = false;
-bool btnNewInputAllowedFlag = false;
+//BUTTONSHITXXXXTo Class===========================================
 
-int incSYS_RUN = 0;
-int* pBtnPressed;
-
-void checkForNewButtonPress()                 //START von dor mascihine....wenn net geprellt, gebmor in keypointer weiter an SWITCHSTATE
-{
-  int bufferKeypad = read_LCD_buttons(); 
-  pBtnPressed = &bufferKeypad;
-
-  switch (bufferKeypad)       //WOOOS BUFFERN!!! OB MIR WOS BUFFERN??? ÜBERHAUPT
-  {
-  case btnNONE:
-    btnNewInputAllowedFlag = true;
-    break;
-
-  case btnRIGHT:
-    if (btnNewInputAllowedFlag == false)      break;
-    switchState(pBtnPressed); 
-    btnNewInputAllowedFlag = false;
-    break;
-
-  case btnLEFT:
-    if (btnNewInputAllowedFlag == false)      break;
-    switchState(pBtnPressed); 
-    btnNewInputAllowedFlag = false;
-    break;
-
-  case btnSELECT:
-    if (btnNewInputAllowedFlag == false)      break;
-    switchState(pBtnPressed); 
-    btnNewInputAllowedFlag = false;
-    break;
-
-  case btnUP:
-    if (btnNewInputAllowedFlag == false)      break;
-
-    btnNewIncAllowedFlag = true;
-    switchState(pBtnPressed); 
-    btnNewIncAllowedFlag = false;
-    btnNewInputAllowedFlag = false;
-    break;
-
-  case btnDOWN:
-    if (btnNewInputAllowedFlag == false)      break;
-
-    btnNewDecAllowedFlag = true;
-    switchState(pBtnPressed);
-    btnNewDecAllowedFlag = false;
-    btnNewInputAllowedFlag = false;
-    break;
-  }
-
-}
 
 
 //SETUP===============================================
 void setup()
 {
   Serial.begin(9600);
-  Serial.println("Serial hüü!");
-
-  Serial.println((int)pSwitchState);
-  pSwitchState = &switchState;                        //wäms die &switchState auf fkt pointer   
-  Serial.println((int)pSwitchState);    //scheint zu loden
-
-
+  Serial.println("Serial hüü!");  
 
   lcdScreen.drawStartScreen();
   pinMode(MOTORGATE, OUTPUT);
@@ -168,6 +109,9 @@ void loop()
 }
 
 //ACHTUNG!STATMASCINE===============================================
+int incSYS_RUN = 0;
+
+
 void stateMachine() //~~~♪callMe from main()
 {
   switch (state)  {
@@ -178,9 +122,9 @@ void stateMachine() //~~~♪callMe from main()
     break;
 
   case SYS_RUN_RED:
-  Serial.println("hey run red");
+  // Serial.println("hey run red");
     doRUN_RED();
-    checkForNewButtonPress();
+    inputButtons.checkForNewButtonPress();    
 
     incSYS_RUN = incSYS_RUN - 1;
     if (incSYS_RUN == 0)
@@ -189,7 +133,7 @@ void stateMachine() //~~~♪callMe from main()
 
   case SYS_RUN_YELLOW:
     doRUN_YELLOW();
-    checkForNewButtonPress();
+    inputButtons.checkForNewButtonPress();
 
     incSYS_RUN = incSYS_RUN - 1;
     if (incSYS_RUN == 0)
@@ -198,7 +142,7 @@ void stateMachine() //~~~♪callMe from main()
 
   case SYS_RUN_GREEN:
     doRUN_GREEN();
-    checkForNewButtonPress();
+    inputButtons.checkForNewButtonPress();
 
     incSYS_RUN = incSYS_RUN - 1;
     if (incSYS_RUN == 0)
@@ -208,43 +152,43 @@ void stateMachine() //~~~♪callMe from main()
 //WAIT================================
   case SYS_WAIT:
     doSYS_WAIT();
-    checkForNewButtonPress();
+    inputButtons.checkForNewButtonPress();
     break;
 //SET================================
   case SYS_SET_SOLL:
     doSYS_SET_SOLL();
-    checkForNewButtonPress();
+    inputButtons.checkForNewButtonPress();
     break;
 
   case SYS_SET_THRES:
     doSYS_SET_THRES();
-    checkForNewButtonPress();
+    inputButtons.checkForNewButtonPress();
     break;
 
 //CAL================================
   case SYS_CAL:
     doSYS_CAL();
-    checkForNewButtonPress();
+    inputButtons.checkForNewButtonPress();
     break;
 
   case CAL_PH4:
     doCAL_PH4();
-    checkForNewButtonPress();
+    inputButtons.checkForNewButtonPress();
     break;
 
   case CAL_PH7:
     doCAL_PH7();
-    checkForNewButtonPress();
+    inputButtons.checkForNewButtonPress();
     break;
 
   case CAL_CONF:
     doCAL_CONF();
-    checkForNewButtonPress();
+    inputButtons.checkForNewButtonPress();
     break;
 
   case CAL_OK:
     doCAL_OK();
-    checkForNewButtonPress();         //eventuell delay(1500) donn state == SYS_WAIT
+    inputButtons.checkForNewButtonPress();         //eventuell delay(1500) donn state == SYS_WAIT
     break;
 
   }
@@ -254,12 +198,15 @@ void stateMachine() //~~~♪callMe from main()
 }
 
 //stateMaschine-doFnkBlock//////////////////////////////////
-void doSYS_RUN_INTERFACE()
+//wenn ph nan, bleiber im interface hängen...momentan hupfter auf GREEN, ober magari a eigerner SYS_RUN_ERROR war net schlecht
+////////OOOOODER cal isch kaputt, schmeis olm NA--->erster sell checkn
+void doSYS_RUN_INTERFACE()          
 {
   phLast = phSonde.getPhIst();
   if      (phLast >= phSoll + phSollThres)    {    state = SYS_RUN_RED;     }
   else if (phLast >= phSoll)                  {    state = SYS_RUN_YELLOW;  }
   else if (phLast < phSoll)                   {    state = SYS_RUN_GREEN;   }
+  //else                                        {    state = SYS_RUN_GREEN;   }         //error case
 }
 
 void doRUN_RED()                              {    digitalWrite(MOTORGATE, HIGH);   }
@@ -272,16 +219,9 @@ void doSYS_WAIT()
   phLast = phSonde.getPhIst();
 }
 
-void doSYS_SET_SOLL()
-{
-  if (btnNewIncAllowedFlag == true)    incSoll();
-  if (btnNewDecAllowedFlag == true)    decSoll();
-}
-void doSYS_SET_THRES()
-{
-  if (btnNewIncAllowedFlag == true)    incThres();
-  if (btnNewDecAllowedFlag == true)    decThres();
-}
+//achtung inc/dec mocht die menumap, hot ansich nix mim do-Aktor part zutian
+void doSYS_SET_SOLL()   {}
+void doSYS_SET_THRES()  {}
 
 void doSYS_CAL(){}
 void doCAL_PH4()                    {  phLast = phSonde.getPhIst();}
