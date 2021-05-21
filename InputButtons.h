@@ -11,58 +11,49 @@ class InputButtons
 public:
     InputButtons(void (*_pSwitchState)(int *)) : pSwitchState(_pSwitchState) 
     {
-        
+        pBtnPressed = &bufferKeypad;
     }
 
-    bool btnNewInputAllowedFlag = false;
 
-    bool aknIncFlag()
-    {
-        btnNewIncAllowedFlag = false;
-        return true;
-    }
-    bool aknDecFlag()
-    {
-        btnNewDecAllowedFlag = false;
-        return true;
-    }
+void aknNewInput()
+{
+    btnAcptNewInput = false;
+}
 
 //START von dor mascihine....wenn net geprellt, gebmor in keypointer weiter an SWITCHSTATE
 //seint so zu lafn...
     void checkForNewButtonPress()           
     {
-        int bufferKeypad = read_LCD_buttons();
-        pBtnPressed = &bufferKeypad;
+        bufferKeypad = read_LCD_buttons();
+        
         switch (bufferKeypad)                  
         {
-        case btnNONE:                   btnNewInputAllowedFlag = true;                  break;
+        case btnNONE:                   btnAcptNewInput = true;                  break;
 
-        case btnRIGHT:              if (btnNewInputAllowedFlag == false)                break;
+        case btnRIGHT:              if (btnAcptNewInput == false)                break;
             switchState(pBtnPressed);
             // pSwitchState(pBtnPressed);          // kp wieso i gmoant hon i brauch des, bleib erst mol do
-            btnNewInputAllowedFlag = false;
+            btnAcptNewInput = false;
             break;
 
-        case btnLEFT:                if (btnNewInputAllowedFlag == false)               break;
+        case btnLEFT:                if (btnAcptNewInput == false)               break;
             switchState(pBtnPressed);
-            btnNewInputAllowedFlag = false;
+            btnAcptNewInput = false;
             break;
 
-        case btnSELECT:             if (btnNewInputAllowedFlag == false)                break;
+        case btnSELECT:             if (btnAcptNewInput == false)                break;
             switchState(pBtnPressed);
-            btnNewInputAllowedFlag = false;
+            btnAcptNewInput = false;
             break;
 
-        case btnUP:                 if (btnNewInputAllowedFlag == false)                break;
-            btnNewIncAllowedFlag = true;
+        case btnUP:                 if (btnAcptNewInput == false)                break;
             switchState(pBtnPressed);
-            btnNewInputAllowedFlag = false;
+            btnAcptNewInput = false;
             break;
 
-        case btnDOWN:               if (btnNewInputAllowedFlag == false)                break;
-            btnNewDecAllowedFlag = true;
+        case btnDOWN:               if (btnAcptNewInput == false)                break;
             switchState(pBtnPressed);
-            btnNewInputAllowedFlag = false;
+            btnAcptNewInput = false;
             break;
         }
     }
@@ -70,14 +61,14 @@ public:
 private:
     int lcd_key = 0;
     int adc_key_in = 0;
+    int bufferKeypad = 0;
+
+    bool btnAcptNewInput = false;
+    
 
     void (*pSwitchState)(int *); //Pointer auf die SwitchState
-
-
     int *pBtnPressed;            //Pointer auf keyValue
 
-    bool btnNewIncAllowedFlag = false;
-    bool btnNewDecAllowedFlag = false;
 
     int read_LCD_buttons()
     {

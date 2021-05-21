@@ -8,8 +8,10 @@
 
 //MENUMAP===============================================
 state_t state = SYS_WAIT;     //init State
+
 void switchState(int* pButton)                //dereferenziert in keypointer und switcht/callt di inc/dec (!!!!!!)
 {
+
   switch (state)
   {
 
@@ -19,46 +21,47 @@ void switchState(int* pButton)                //dereferenziert in keypointer und
   case SYS_RUN_GREEN:         if (*pButton == btnRIGHT)      state = SYS_WAIT;    break;
 
   case SYS_WAIT:
-    if (*pButton == btnRIGHT)      state = SYS_SET_SOLL;
-    if (*pButton == btnLEFT)      state = SYS_RUN_INTERFACE;
+    if (*pButton == btnRIGHT)                               state = SYS_SET_SOLL;
+    if (*pButton == btnLEFT)                                state = SYS_RUN_INTERFACE;
     break;
 
   case SYS_SET_SOLL:
-    if (*pButton == btnRIGHT)      state = SYS_SET_THRES;
-    if (*pButton == btnLEFT)      state = SYS_WAIT;
-    if (*pButton == btnUP)      incSoll();
-    if (*pButton == btnDOWN)      decSoll();
+    if (*pButton == btnRIGHT)                               state = SYS_SET_THRES;
+    if (*pButton == btnLEFT)                                state = SYS_WAIT;
+    if (*pButton == btnUP)                                          incSoll();
+    if (*pButton == btnDOWN)                                        decSoll();
     break;
 
   case SYS_SET_THRES:
-    if (*pButton == btnRIGHT)      state = SYS_CAL;
-    if (*pButton == btnLEFT)      state = SYS_SET_SOLL;
-    if (*pButton == btnUP)      incThres();
-    if (*pButton == btnDOWN)      decThres();
+    if (*pButton == btnRIGHT)                               state = SYS_CAL;
+    if (*pButton == btnLEFT)                                state = SYS_SET_SOLL;
+    if (*pButton == btnUP)                                          incThres();
+    if (*pButton == btnDOWN)                                        decThres();
     break;
 
   case SYS_CAL:
-    if (*pButton == btnLEFT)      state = SYS_SET_THRES;
-    if (*pButton == btnSELECT)      state = CAL_PH4;
+    if (*pButton == btnLEFT)                              state = SYS_SET_THRES;
+    if (*pButton == btnSELECT)                            state = CAL_PH4;
     break;
 
   case CAL_PH4:
-    if (*pButton == btnSELECT)      state = CAL_PH7;
-    if (*pButton == btnLEFT)      state = SYS_CAL;
+    if (*pButton == btnSELECT)                            state = CAL_PH7;
+    if (*pButton == btnLEFT)                              state = SYS_CAL;
     break;
 
   case CAL_PH7:
-    if (*pButton == btnSELECT)      state = CAL_CONF;
-    if (*pButton == btnLEFT)      state = SYS_CAL;
+    if (*pButton == btnSELECT)                            state = CAL_CONF;
+    if (*pButton == btnLEFT)                              state = SYS_CAL;
     break;
 
   case CAL_CONF:
-    if (*pButton == btnSELECT)      state = CAL_OK;
-    if (*pButton == btnLEFT)      state = SYS_CAL;
+    if (*pButton == btnSELECT)                            state = CAL_OK;
+    if (*pButton == btnLEFT)                              state = SYS_CAL;
     break;
 
-  case CAL_OK:    state = SYS_WAIT;    break;
+  case CAL_OK:                                            state = SYS_WAIT;    break;
   }
+
 }
 
 void (*pSwitchState)(int*);                 //fkt pointer auf die switchState
@@ -99,8 +102,6 @@ void setup()
   // Serial.println("Adress swtichState bei setup()");
   pSwitchState = &switchState;                        //wäms die &switchState auf fkt pointer   
   // Serial.println((int)pSwitchState);    //scheint zu loden
-
-
 
   lcdScreen.drawStartScreen();
   pinMode(MOTORGATE, OUTPUT);
@@ -224,16 +225,9 @@ void doSYS_WAIT()
   phLast = phSonde.getPhIst();
 }
 
-void doSYS_SET_SOLL()
-{
-  if (inputButtons.aknIncFlag() == true)    incSoll();
-  if (inputButtons.aknDecFlag() == true)    decSoll();
-}
-void doSYS_SET_THRES()
-{
-  if (inputButtons.aknIncFlag() == true)    incThres();
-  if (inputButtons.aknDecFlag() == true)    decThres();
-}
+//achtung inc/dec mocht die menumap, hot ansich nix mim do-Aktor part zutian
+void doSYS_SET_SOLL()   {}
+void doSYS_SET_THRES()  {}
 
 void doSYS_CAL(){}
 void doCAL_PH4()                    {  phLast = phSonde.getPhIst();}
