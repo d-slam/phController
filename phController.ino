@@ -22,17 +22,14 @@ LCDScreen lcdScreen(&phLast, &phSoll, &phSollThres);
 
 PhSonde phSonde;
 
-bool incFlag = false;
-bool decFlag = false;
+bool btnNewIncAllowedFlag = false;
+bool btnNewDecAllowedFlag = false;
 bool btnNewInputAllowedFlag = false;
 
 state_t state = SYS_WAIT; //init State
 
 // unsigned char incSYS_RUN;
 int incSYS_RUN = 0;
-
-
-
 
 //SETUP===============================================
 void setup()
@@ -41,16 +38,16 @@ void setup()
   Serial.begin(9600);
   Serial.println("Serial hüü!");
   lcdScreen.drawStartScreen();
-
 }
 
 //LOOP==========================================================
 void loop()
 {
   stateMachine();
+  // delay(20);
 }
 
-
+//MyMethodes==========================================================
 //ACHTUNG!STATMASCINE===============================================
 void stateMachine() //~~~♪callMe from main()
 {
@@ -129,10 +126,63 @@ void stateMachine() //~~~♪callMe from main()
     break;
 
   }
+
   lcdScreen.redraw(state);
 
 }
-//MyMethodes==========================================================
+
+//stateMaschine-doFnkBlock//////////////////////////////////
+void doSYS_RUN_INTERFACE()
+{
+  phLast = phSonde.getPhIst();
+  if      (phLast >= phSoll + phSollThres)    {    state = SYS_RUN_RED;     }
+  else if (phLast >= phSoll)                  {    state = SYS_RUN_YELLOW;  }
+  else if (phLast < phSoll)                   {    state = SYS_RUN_GREEN;   }
+}
+
+void doRUN_RED()                              {    digitalWrite(MOTORGATE, HIGH);   }
+void doRUN_YELLOW()                           {    digitalWrite(MOTORGATE, LOW);    }
+void doRUN_GREEN()                            {    digitalWrite(MOTORGATE, LOW);    }
+
+void doSYS_WAIT()
+{
+  digitalWrite(MOTORGATE, LOW);
+  phLast = phSonde.getPhIst();
+}
+
+void doSYS_SET_SOLL()
+{
+  if (btnNewIncAllowedFlag == true)    incSoll();
+  if (btnNewDecAllowedFlag == true)    decSoll();
+}
+void doSYS_SET_THRES()
+{
+  if (btnNewIncAllowedFlag == true)    incThres();
+  if (btnNewDecAllowedFlag == true)    decThres();
+}
+
+void doSYS_CAL(){}
+void doCAL_PH4()                    {  phLast = phSonde.getPhIst();}
+void doCAL_PH7()
+{
+  phLast = phSonde.getPhIst();
+  phSonde.setVolt4(volt);
+}
+void doCAL_CONF()
+{
+  phSonde.setVolt7(volt);
+  phSonde.calcDelta();
+}
+void doCAL_OK()                    { phSonde.applyCallibration(); }
+
+
+void incSoll() { phSoll += 0.1; }
+void decSoll() { phSoll -= 0.1; }
+void incThres() { phSollThres += 0.1; }
+void decThres() { phSollThres -= 0.1; }
+
+
+
 //BtnInterface===============================================
 void checkForNewButtonPress()
 {
@@ -146,7 +196,6 @@ void checkForNewButtonPress()
 
   case btnRIGHT:
     if (btnNewInputAllowedFlag == false)      break;
-      Serial.println("rechts drückt!");
     doNewButton(lcd_key); 
     btnNewInputAllowedFlag = false;
     break;
@@ -165,13 +214,22 @@ void checkForNewButtonPress()
 
   case btnUP:
     if (btnNewInputAllowedFlag == false)      break;
+
+    btnNewIncAllowedFlag = true;
     doNewButton(lcd_key); 
+    btnNewIncAllowedFlag = false;
+
+
     btnNewInputAllowedFlag = false;
     break;
 
   case btnDOWN:
     if (btnNewInputAllowedFlag == false)      break;
-    doNewButton(lcd_key); 
+
+    btnNewDecAllowedFlag = true;
+    doNewButton(lcd_key);
+    btnNewDecAllowedFlag = false;
+
     btnNewInputAllowedFlag = false;
     break;
   }
@@ -180,7 +238,6 @@ void checkForNewButtonPress()
 //MENUMAP===============================================
 void doNewButton(int keyPressed)
 {
-
   switch (state)
   {
 
@@ -232,53 +289,3 @@ void doNewButton(int keyPressed)
   }
 }
 
-//stateMaschine-doFnkBlock//////////////////////////////////
-void doSYS_RUN_INTERFACE()
-{
-  phLast = phSonde.getPhIst();
-  if      (phLast >= phSoll + phSollThres)    {    state = SYS_RUN_RED;     }
-  else if (phLast >= phSoll)                  {    state = SYS_RUN_YELLOW;  }
-  else if (phLast < phSoll)                   {    state = SYS_RUN_GREEN;   }
-}
-
-void doRUN_RED()                              {    digitalWrite(MOTORGATE, HIGH);   }
-void doRUN_YELLOW()                           {    digitalWrite(MOTORGATE, LOW);    }
-void doRUN_GREEN()                            {    digitalWrite(MOTORGATE, LOW);    }
-
-void doSYS_WAIT()
-{
-  digitalWrite(MOTORGATE, LOW);
-  phLast = phSonde.getPhIst();
-
-}
-
-void doSYS_SET_SOLL()
-{
-  if (incFlag == true)    incSoll();
-  if (decFlag == true)    decSoll();
-}
-void doSYS_SET_THRES()
-{
-  if (incFlag == true)    incThres();
-  if (decFlag == true)    decThres();
-}
-
-void doSYS_CAL(){}
-void doCAL_PH4()                    {  phLast = phSonde.getPhIst();}
-void doCAL_PH7()
-{
-  phLast = phSonde.getPhIst();
-  phSonde.setVolt4(volt);
-}
-void doCAL_CONF()
-{
-  phSonde.setVolt7(volt);
-  phSonde.calcDelta();
-}
-void doCAL_OK()                    { phSonde.applyCallibration(); }
-
-
-void incSoll() { phSoll += 0.1; }
-void decSoll() { phSoll -= 0.1; }
-void incThres() { phSollThres += 0.1; }
-void decThres() { phSollThres -= 0.1; }
