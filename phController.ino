@@ -8,7 +8,15 @@
 #include "enums.h"
 
 //MENUMAP===============================================
+
+typedef void (*pAknNewInput)();
+//von wo dor callback gecallt werden muas
+void regCallback(pAknNewInput _ptrFkn) { (*_ptrFkn)(); }
+
+
 state_t state = SYS_WAIT;     //init State
+
+
 void switchState(int* pButton)                
 {
   switch (state)  {
@@ -80,9 +88,17 @@ PhSonde phSonde;
 
 InputButtons inputButtons;                    //fkt pointer gebmor in contructor mit
 
+
+
 //SETUP===============================================
 void setup()
 {
+  //ptr init
+  pAknNewInput ptrCallback = my_callback;
+
+  //reg callback
+  regCallback(ptrCallback);
+
   Serial.begin(9600);
   Serial.println("Serial hüü!");  
 
@@ -93,6 +109,8 @@ void setup()
 //LOOP==========================================================
 void loop()
 {  
+  
+
   stateMachine();
   delay(20);
 }

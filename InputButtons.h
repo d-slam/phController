@@ -6,13 +6,17 @@
 #ifndef InputButtons_h
 #define InputButtons_h
 
+    
+void my_callback()
+{
+    Serial.println("seas von callback...alias aknNewINp");
+}
+
 class InputButtons
 {
 public:
-    InputButtons()          {        pBtnPressed = &bufferKeypad;         }
-
-    void aknNewInput()      {        btnAcptNewInput = false;             }
-
+    // pAknNewInput=&pPrototyp;
+    InputButtons()                  {        pBtnPressed = &bufferKeypad;             }  
     void checkForNewButtonPress()                 
     {
         switch (bufferKeypad = getKeyAnalog())
@@ -45,9 +49,20 @@ public:
             break;
         }
     }
+    void aknNewInput()              {        btnAcptNewInput = false;                 }
+
+    void miniMain()
+    {
+
+    }
+
 
 private:
     int *pBtnPressed;            //Pointer auf keyValue, werd dor switchState geben fürn switchCheck
+
+
+
+
 
     int keyAnalog = 0;
     int bufferKeypad = 0;
@@ -66,5 +81,8 @@ private:
                                             return btnNONE; // when all others fail, return this...
     }
 };
+
+
+
 
 #endif
