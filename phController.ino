@@ -22,7 +22,6 @@ float phSoll = 5.5;
 float phSollThres = 0.5;
 
 LCDScreen lcdScreen(&phLast, &phSoll, &phSollThres);
-
 PhSonde phSonde;
 
 InputButtons inputButtons;
@@ -33,17 +32,15 @@ bool btnNewIncAllowedFlag = false;
 bool btnNewDecAllowedFlag = false;
 bool btnNewInputAllowedFlag = false;
 
-// unsigned char incSYS_RUN;
 int incSYS_RUN = 0;
-
 int* pBtnPressed;
 
-void checkForNewButtonPress()
+void checkForNewButtonPress()                 //START von dor mascihine....wenn net geprellt, gebmor in keypointer weiter an SWITCHSTATE
 {
-  int bufferKeypad = inputButtons.read_LCD_buttons(); //read BUTTON
+  int bufferKeypad = inputButtons.read_LCD_buttons(); 
   pBtnPressed = &bufferKeypad;
 
-  switch (bufferKeypad)                     //WOOOS BUFFERN!!! OB MIR WOS BUFFERN??? ÜBERHAUPT
+  switch (bufferKeypad)       //WOOOS BUFFERN!!! OB MIR WOS BUFFERN??? ÜBERHAUPT
   {
   case btnNONE:
     btnNewInputAllowedFlag = true;
@@ -89,7 +86,7 @@ void checkForNewButtonPress()
 }
 
 //MENUMAP===============================================
-void switchState(int* pButton)
+void switchState(int* pButton)                //dereferenziert in keypointer und switcht/callt di inc/dec (!!!!!!)
 {
   switch (state)
   {
@@ -293,4 +290,3 @@ void incSoll() { phSoll += 0.1; }
 void decSoll() { phSoll -= 0.1; }
 void incThres() { phSollThres += 0.1; }
 void decThres() { phSollThres -= 0.1; }
-
