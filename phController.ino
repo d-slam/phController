@@ -38,16 +38,13 @@ int incSYS_RUN = 0;
 
 int* pBtnPressed;
 
-
-//BtnInterface===============================================
 void checkForNewButtonPress()
 {
-  int tempLcd_key;
+  int bufferKeypad = inputButtons.read_LCD_buttons(); //read BUTTON
 
-  tempLcd_key = inputButtons.read_LCD_buttons(); //read BUTTON
-  pBtnPressed = &tempLcd_key;
+  pBtnPressed = &bufferKeypad;
 
-  switch (tempLcd_key) //check welcher BUTTON?
+  switch (bufferKeypad)                     //WOOOS BUFFERN!!! OB MIR WOS BUFFERN??? ÜBERHAUPT
   {
   case btnNONE:
     btnNewInputAllowedFlag = true;

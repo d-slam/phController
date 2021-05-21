@@ -6,9 +6,13 @@
 #ifndef InputButtons_h
 #define InputButtons_h
 
+
+
 class InputButtons
 {
 public:
+    InputButtons() {}
+
     int lcd_key = 0;
     int adc_key_in = 0;
 
@@ -31,6 +35,8 @@ public:
     }
 
 private:
+
+
 };
 
 #endif
