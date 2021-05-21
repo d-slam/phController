@@ -6,12 +6,13 @@
 #ifndef InputButtons_h
 #define InputButtons_h
 
+    
+
+
 class InputButtons
 {
 public:
-    InputButtons()          {        pBtnPressed = &bufferKeypad;         }
-
-    void aknNewInput()      {        btnAcptNewInput = false;             }
+    InputButtons()                  {        pBtnPressed = &bufferKeypad;             }  
 
     void checkForNewButtonPress()                 
     {
@@ -46,6 +47,8 @@ public:
         }
     }
 
+    void aknNewInput()              {        btnAcptNewInput = false;                 }
+
 private:
     int *pBtnPressed;            //Pointer auf keyValue, werd dor switchState geben fürn switchCheck
 
@@ -66,5 +69,8 @@ private:
                                             return btnNONE; // when all others fail, return this...
     }
 };
+
+
+
 
 #endif

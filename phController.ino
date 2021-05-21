@@ -78,7 +78,7 @@ float phSollThres = 0.5;
 LCDScreen lcdScreen(&phLast, &phSoll, &phSollThres);
 PhSonde phSonde;
 
-InputButtons inputButtons;                    //fkt pointer gebmor in contructor mit
+InputButtons inputButtons;                 
 
 //SETUP===============================================
 void setup()
@@ -101,9 +101,10 @@ void loop()
 int decSYS_RUN = 0;
 void stateMachine() //~~~♪callMe from main()
 {
-    inputButtons.checkForNewButtonPress();
+  inputButtons.checkForNewButtonPress();
 
   lcdScreen.redraw(state);
+
   switch (state)  {
 
   case SYS_RUN_INTERFACE:
