@@ -86,62 +86,8 @@ PhSonde phSonde;
 //BUTTONSHIT===============================================
 InputButtons inputButtons(pSwitchState);                    //fkt pointer gebmor in contructor mit
 
-bool btnNewIncAllowedFlag = false;
-bool btnNewDecAllowedFlag = false;
-bool btnNewInputAllowedFlag = false;
+//BUTTONSHITXXXXTo Class===========================================
 
-int incSYS_RUN = 0;
-int* pBtnPressed;
-
-void checkForNewButtonPress()                 //START von dor mascihine....wenn net geprellt, gebmor in keypointer weiter an SWITCHSTATE
-{
-  int bufferKeypad = read_LCD_buttons(); 
-  pBtnPressed = &bufferKeypad;
-
-  switch (bufferKeypad)       //WOOOS BUFFERN!!! OB MIR WOS BUFFERN??? ÜBERHAUPT
-  {
-  case btnNONE:
-    btnNewInputAllowedFlag = true;
-    break;
-
-  case btnRIGHT:
-    if (btnNewInputAllowedFlag == false)      break;
-    switchState(pBtnPressed); 
-    btnNewInputAllowedFlag = false;
-    break;
-
-  case btnLEFT:
-    if (btnNewInputAllowedFlag == false)      break;
-    switchState(pBtnPressed); 
-    btnNewInputAllowedFlag = false;
-    break;
-
-  case btnSELECT:
-    if (btnNewInputAllowedFlag == false)      break;
-    switchState(pBtnPressed); 
-    btnNewInputAllowedFlag = false;
-    break;
-
-  case btnUP:
-    if (btnNewInputAllowedFlag == false)      break;
-
-    btnNewIncAllowedFlag = true;
-    switchState(pBtnPressed); 
-    btnNewIncAllowedFlag = false;
-    btnNewInputAllowedFlag = false;
-    break;
-
-  case btnDOWN:
-    if (btnNewInputAllowedFlag == false)      break;
-
-    btnNewDecAllowedFlag = true;
-    switchState(pBtnPressed);
-    btnNewDecAllowedFlag = false;
-    btnNewInputAllowedFlag = false;
-    break;
-  }
-
-}
 
 
 //SETUP===============================================
@@ -168,6 +114,9 @@ void loop()
 }
 
 //ACHTUNG!STATMASCINE===============================================
+int incSYS_RUN = 0;
+
+
 void stateMachine() //~~~♪callMe from main()
 {
   switch (state)  {
@@ -180,7 +129,7 @@ void stateMachine() //~~~♪callMe from main()
   case SYS_RUN_RED:
   Serial.println("hey run red");
     doRUN_RED();
-    checkForNewButtonPress();
+    inputButtons.checkForNewButtonPress();
 
     incSYS_RUN = incSYS_RUN - 1;
     if (incSYS_RUN == 0)
@@ -189,7 +138,7 @@ void stateMachine() //~~~♪callMe from main()
 
   case SYS_RUN_YELLOW:
     doRUN_YELLOW();
-    checkForNewButtonPress();
+    inputButtons.checkForNewButtonPress();
 
     incSYS_RUN = incSYS_RUN - 1;
     if (incSYS_RUN == 0)
@@ -198,7 +147,7 @@ void stateMachine() //~~~♪callMe from main()
 
   case SYS_RUN_GREEN:
     doRUN_GREEN();
-    checkForNewButtonPress();
+    inputButtons.checkForNewButtonPress();
 
     incSYS_RUN = incSYS_RUN - 1;
     if (incSYS_RUN == 0)
@@ -208,43 +157,43 @@ void stateMachine() //~~~♪callMe from main()
 //WAIT================================
   case SYS_WAIT:
     doSYS_WAIT();
-    checkForNewButtonPress();
+    inputButtons.checkForNewButtonPress();
     break;
 //SET================================
   case SYS_SET_SOLL:
     doSYS_SET_SOLL();
-    checkForNewButtonPress();
+    inputButtons.checkForNewButtonPress();
     break;
 
   case SYS_SET_THRES:
     doSYS_SET_THRES();
-    checkForNewButtonPress();
+    inputButtons.checkForNewButtonPress();
     break;
 
 //CAL================================
   case SYS_CAL:
     doSYS_CAL();
-    checkForNewButtonPress();
+    inputButtons.checkForNewButtonPress();
     break;
 
   case CAL_PH4:
     doCAL_PH4();
-    checkForNewButtonPress();
+    inputButtons.checkForNewButtonPress();
     break;
 
   case CAL_PH7:
     doCAL_PH7();
-    checkForNewButtonPress();
+    inputButtons.checkForNewButtonPress();
     break;
 
   case CAL_CONF:
     doCAL_CONF();
-    checkForNewButtonPress();
+    inputButtons.checkForNewButtonPress();
     break;
 
   case CAL_OK:
     doCAL_OK();
-    checkForNewButtonPress();         //eventuell delay(1500) donn state == SYS_WAIT
+    inputButtons.checkForNewButtonPress();         //eventuell delay(1500) donn state == SYS_WAIT
     break;
 
   }
@@ -274,13 +223,13 @@ void doSYS_WAIT()
 
 void doSYS_SET_SOLL()
 {
-  if (btnNewIncAllowedFlag == true)    incSoll();
-  if (btnNewDecAllowedFlag == true)    decSoll();
+  if (inputButtons.btnNewIncAllowedFlag == true)    incSoll();
+  if (inputButtons.btnNewDecAllowedFlag == true)    decSoll();
 }
 void doSYS_SET_THRES()
 {
-  if (btnNewIncAllowedFlag == true)    incThres();
-  if (btnNewDecAllowedFlag == true)    decThres();
+  if (inputButtons.btnNewIncAllowedFlag == true)    incThres();
+  if (inputButtons.btnNewDecAllowedFlag == true)    decThres();
 }
 
 void doSYS_CAL(){}
