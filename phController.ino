@@ -27,11 +27,11 @@ PhSonde phSonde;
 
 InputButtons inputButtons;
 
+state_t state = SYS_WAIT;     //init State
+
 bool btnNewIncAllowedFlag = false;
 bool btnNewDecAllowedFlag = false;
 bool btnNewInputAllowedFlag = false;
-
-state_t state = SYS_WAIT; //init State
 
 // unsigned char incSYS_RUN;
 int incSYS_RUN = 0;
@@ -41,7 +41,6 @@ int* pBtnPressed;
 void checkForNewButtonPress()
 {
   int bufferKeypad = inputButtons.read_LCD_buttons(); //read BUTTON
-
   pBtnPressed = &bufferKeypad;
 
   switch (bufferKeypad)                     //WOOOS BUFFERN!!! OB MIR WOS BUFFERN??? ÜBERHAUPT
@@ -52,19 +51,19 @@ void checkForNewButtonPress()
 
   case btnRIGHT:
     if (btnNewInputAllowedFlag == false)      break;
-    doNewButton(); 
+    switchState(pBtnPressed); 
     btnNewInputAllowedFlag = false;
     break;
 
   case btnLEFT:
     if (btnNewInputAllowedFlag == false)      break;
-    doNewButton(); 
+    switchState(pBtnPressed); 
     btnNewInputAllowedFlag = false;
     break;
 
   case btnSELECT:
     if (btnNewInputAllowedFlag == false)      break;
-    doNewButton(); 
+    switchState(pBtnPressed); 
     btnNewInputAllowedFlag = false;
     break;
 
@@ -72,7 +71,7 @@ void checkForNewButtonPress()
     if (btnNewInputAllowedFlag == false)      break;
 
     btnNewIncAllowedFlag = true;
-    doNewButton(); 
+    switchState(pBtnPressed); 
     btnNewIncAllowedFlag = false;
     btnNewInputAllowedFlag = false;
     break;
@@ -81,7 +80,7 @@ void checkForNewButtonPress()
     if (btnNewInputAllowedFlag == false)      break;
 
     btnNewDecAllowedFlag = true;
-    doNewButton();
+    switchState(pBtnPressed);
     btnNewDecAllowedFlag = false;
     btnNewInputAllowedFlag = false;
     break;
@@ -90,55 +89,53 @@ void checkForNewButtonPress()
 }
 
 //MENUMAP===============================================
-void doNewButton()
+void switchState(int* pButton)
 {
-  int keyPressed = *pBtnPressed;
-
   switch (state)
   {
 
-  case SYS_RUN_INTERFACE:     if (keyPressed == btnRIGHT)      state = SYS_WAIT;    break;
-  case SYS_RUN_RED:           if (keyPressed == btnRIGHT)      state = SYS_WAIT;    break;
-  case SYS_RUN_YELLOW:        if (keyPressed == btnRIGHT)      state = SYS_WAIT;    break;
-  case SYS_RUN_GREEN:         if (keyPressed == btnRIGHT)      state = SYS_WAIT;    break;
+  case SYS_RUN_INTERFACE:     if (*pButton == btnRIGHT)      state = SYS_WAIT;    break;
+  case SYS_RUN_RED:           if (*pButton == btnRIGHT)      state = SYS_WAIT;    break;
+  case SYS_RUN_YELLOW:        if (*pButton == btnRIGHT)      state = SYS_WAIT;    break;
+  case SYS_RUN_GREEN:         if (*pButton == btnRIGHT)      state = SYS_WAIT;    break;
 
   case SYS_WAIT:
-    if (keyPressed == btnRIGHT)      state = SYS_SET_SOLL;
-    if (keyPressed == btnLEFT)      state = SYS_RUN_INTERFACE;
+    if (*pButton == btnRIGHT)      state = SYS_SET_SOLL;
+    if (*pButton == btnLEFT)      state = SYS_RUN_INTERFACE;
     break;
 
   case SYS_SET_SOLL:
-    if (keyPressed == btnRIGHT)      state = SYS_SET_THRES;
-    if (keyPressed == btnLEFT)      state = SYS_WAIT;
-    if (keyPressed == btnUP)      incSoll();
-    if (keyPressed == btnDOWN)      decSoll();
+    if (*pButton == btnRIGHT)      state = SYS_SET_THRES;
+    if (*pButton == btnLEFT)      state = SYS_WAIT;
+    if (*pButton == btnUP)      incSoll();
+    if (*pButton == btnDOWN)      decSoll();
     break;
 
   case SYS_SET_THRES:
-    if (keyPressed == btnRIGHT)      state = SYS_CAL;
-    if (keyPressed == btnLEFT)      state = SYS_SET_SOLL;
-    if (keyPressed == btnUP)      incThres();
-    if (keyPressed == btnDOWN)      decThres();
+    if (*pButton == btnRIGHT)      state = SYS_CAL;
+    if (*pButton == btnLEFT)      state = SYS_SET_SOLL;
+    if (*pButton == btnUP)      incThres();
+    if (*pButton == btnDOWN)      decThres();
     break;
 
   case SYS_CAL:
-    if (keyPressed == btnLEFT)      state = SYS_SET_THRES;
-    if (keyPressed == btnSELECT)      state = CAL_PH4;
+    if (*pButton == btnLEFT)      state = SYS_SET_THRES;
+    if (*pButton == btnSELECT)      state = CAL_PH4;
     break;
 
   case CAL_PH4:
-    if (keyPressed == btnSELECT)      state = CAL_PH7;
-    if (keyPressed == btnLEFT)      state = SYS_CAL;
+    if (*pButton == btnSELECT)      state = CAL_PH7;
+    if (*pButton == btnLEFT)      state = SYS_CAL;
     break;
 
   case CAL_PH7:
-    if (keyPressed == btnSELECT)      state = CAL_CONF;
-    if (keyPressed == btnLEFT)      state = SYS_CAL;
+    if (*pButton == btnSELECT)      state = CAL_CONF;
+    if (*pButton == btnLEFT)      state = SYS_CAL;
     break;
 
   case CAL_CONF:
-    if (keyPressed == btnSELECT)      state = CAL_OK;
-    if (keyPressed == btnLEFT)      state = SYS_CAL;
+    if (*pButton == btnSELECT)      state = CAL_OK;
+    if (*pButton == btnLEFT)      state = SYS_CAL;
     break;
 
   case CAL_OK:    state = SYS_WAIT;    break;
@@ -296,6 +293,4 @@ void incSoll() { phSoll += 0.1; }
 void decSoll() { phSoll -= 0.1; }
 void incThres() { phSollThres += 0.1; }
 void decThres() { phSollThres -= 0.1; }
-
-
 
