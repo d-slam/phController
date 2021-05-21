@@ -12,8 +12,8 @@
 class InputButtons
 {
 public:
-    // pAknNewInput=&pPrototyp;
     InputButtons()                  {        pBtnPressed = &bufferKeypad;             }  
+
     void checkForNewButtonPress()                 
     {
         switch (bufferKeypad = getKeyAnalog())
@@ -46,17 +46,11 @@ public:
             break;
         }
     }
+
     void aknNewInput()              {        btnAcptNewInput = false;                 }
-
-
-
 
 private:
     int *pBtnPressed;            //Pointer auf keyValue, werd dor switchState geben fürn switchCheck
-
-
-
-
 
     int keyAnalog = 0;
     int bufferKeypad = 0;

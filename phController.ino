@@ -8,10 +8,6 @@
 #include "enums.h"
 
 //MENUMAP===============================================
-
-typedef void (*pAknNewInput)();                             //ptr fürn fknPointer deklarieren
-void regCallback(pAknNewInput _ptrFkn) { (*_ptrFkn)(); }    // do londmor wenn mor in dor main in callbackCallen!
-
 state_t state = SYS_WAIT;     //init State
 void switchState(int* pButton)                
 {
@@ -82,14 +78,7 @@ float phSollThres = 0.5;
 LCDScreen lcdScreen(&phLast, &phSoll, &phSollThres);
 PhSonde phSonde;
 
-InputButtons inputButtons;                    
-
-void my_callback()                      //DE fknt werd gecallt, und über der konni auf meine buttons zuagreifen
-{
-  Serial.println("seas von callback...alias aknNewINp");
-  inputButtons.aknNewInput();
-}
-pAknNewInput ptrCallback = my_callback; //fknPTR lädt die fkn myCallback
+InputButtons inputButtons;                 
 
 //SETUP===============================================
 void setup()
@@ -104,9 +93,6 @@ void setup()
 //LOOP==========================================================
 void loop()
 {  
-
-  regCallback(ptrCallback);       //leit un den callback!!!!
-
   stateMachine();
   delay(20);
 }
@@ -115,9 +101,10 @@ void loop()
 int decSYS_RUN = 0;
 void stateMachine() //~~~♪callMe from main()
 {
-    inputButtons.checkForNewButtonPress();
+  inputButtons.checkForNewButtonPress();
 
   lcdScreen.redraw(state);
+
   switch (state)  {
 
   case SYS_RUN_INTERFACE:
