@@ -7,10 +7,7 @@
 #define InputButtons_h
 
     
-void my_callback()
-{
-    Serial.println("seas von callback...alias aknNewINp");
-}
+
 
 class InputButtons
 {
@@ -51,10 +48,7 @@ public:
     }
     void aknNewInput()              {        btnAcptNewInput = false;                 }
 
-    void miniMain()
-    {
 
-    }
 
 
 private:

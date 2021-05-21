@@ -15,8 +15,6 @@ void regCallback(pAknNewInput _ptrFkn) { (*_ptrFkn)(); }
 
 
 state_t state = SYS_WAIT;     //init State
-
-
 void switchState(int* pButton)                
 {
   switch (state)  {
@@ -88,17 +86,17 @@ PhSonde phSonde;
 
 InputButtons inputButtons;                    //fkt pointer gebmor in contructor mit
 
+void my_callback()
+{
+    Serial.println("seas von callback...alias aknNewINp");
+}
 
+    //ptr init
+  pAknNewInput ptrCallback = my_callback;
 
 //SETUP===============================================
 void setup()
 {
-  //ptr init
-  pAknNewInput ptrCallback = my_callback;
-
-  //reg callback
-  regCallback(ptrCallback);
-
   Serial.begin(9600);
   Serial.println("Serial hüü!");  
 
@@ -109,7 +107,9 @@ void setup()
 //LOOP==========================================================
 void loop()
 {  
-  
+
+  //reg callback
+  regCallback(ptrCallback);
 
   stateMachine();
   delay(20);
