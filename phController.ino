@@ -61,6 +61,8 @@ void switchState(int* pButton)                //dereferenziert in keypointer und
   }
 }
 
+void (*pSwitchState)(int*);
+
 
 //VERY!GLOBALS===============================================
 
@@ -80,7 +82,8 @@ float phSollThres = 0.5;
 
 LCDScreen lcdScreen(&phLast, &phSoll, &phSollThres);
 PhSonde phSonde;
-InputButtons inputButtons;
+
+InputButtons inputButtons(pSwitchState);
 
 bool btnNewIncAllowedFlag = false;
 bool btnNewDecAllowedFlag = false;
@@ -143,6 +146,8 @@ void checkForNewButtonPress()                 //START von dor mascihine....wenn 
 //SETUP===============================================
 void setup()
 {
+  pSwitchState = &switchState;
+
   pinMode(MOTORGATE, OUTPUT);
   Serial.begin(9600);
   Serial.println("Serial hüü!");
