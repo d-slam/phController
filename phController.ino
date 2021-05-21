@@ -9,10 +9,8 @@
 
 //MENUMAP===============================================
 
-typedef void (*pAknNewInput)();
-//von wo dor callback gecallt werden muas
-void regCallback(pAknNewInput _ptrFkn) { (*_ptrFkn)(); }
-
+typedef void (*pAknNewInput)();                             //ptr fürn fknPointer deklarieren
+void regCallback(pAknNewInput _ptrFkn) { (*_ptrFkn)(); }    // do londmor wenn mor in dor main in callbackCallen!
 
 state_t state = SYS_WAIT;     //init State
 void switchState(int* pButton)                
@@ -84,15 +82,14 @@ float phSollThres = 0.5;
 LCDScreen lcdScreen(&phLast, &phSoll, &phSollThres);
 PhSonde phSonde;
 
-InputButtons inputButtons;                    //fkt pointer gebmor in contructor mit
+InputButtons inputButtons;                    
 
-void my_callback()
+void my_callback()                      //DE fknt werd gecallt, und über der konni auf meine buttons zuagreifen
 {
-    Serial.println("seas von callback...alias aknNewINp");
+  Serial.println("seas von callback...alias aknNewINp");
+  inputButtons.aknNewInput();
 }
-
-    //ptr init
-  pAknNewInput ptrCallback = my_callback;
+pAknNewInput ptrCallback = my_callback; //fknPTR lädt die fkn myCallback
 
 //SETUP===============================================
 void setup()
@@ -108,8 +105,7 @@ void setup()
 void loop()
 {  
 
-  //reg callback
-  regCallback(ptrCallback);
+  regCallback(ptrCallback);       //leit un den callback!!!!
 
   stateMachine();
   delay(20);
