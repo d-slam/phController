@@ -64,8 +64,6 @@ void switchState(int* pButton)                //dereferenziert in keypointer und
 
 }
 
-void (*pSwitchState)(int*);                 //fkt pointer auf die switchState
-
 
 //VERY!GLOBALS===============================================
 #include "LCDScreen.h"
@@ -87,7 +85,7 @@ LCDScreen lcdScreen(&phLast, &phSoll, &phSollThres);
 PhSonde phSonde;
 
 //BUTTONSHIT===============================================
-InputButtons inputButtons(pSwitchState);                    //fkt pointer gebmor in contructor mit
+InputButtons inputButtons;                    //fkt pointer gebmor in contructor mit
 
 //BUTTONSHITXXXXTo Class===========================================
 
@@ -97,11 +95,7 @@ InputButtons inputButtons(pSwitchState);                    //fkt pointer gebmor
 void setup()
 {
   Serial.begin(9600);
-  Serial.println("Serial hüü!");
-
-  // Serial.println("Adress swtichState bei setup()");
-  pSwitchState = &switchState;                        //wäms die &switchState auf fkt pointer   
-  // Serial.println((int)pSwitchState);    //scheint zu loden
+  Serial.println("Serial hüü!");  
 
   lcdScreen.drawStartScreen();
   pinMode(MOTORGATE, OUTPUT);
@@ -130,7 +124,7 @@ void stateMachine() //~~~♪callMe from main()
   case SYS_RUN_RED:
   // Serial.println("hey run red");
     doRUN_RED();
-    inputButtons.checkForNewButtonPress();
+    inputButtons.checkForNewButtonPress();    
 
     incSYS_RUN = incSYS_RUN - 1;
     if (incSYS_RUN == 0)

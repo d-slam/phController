@@ -9,45 +9,37 @@
 class InputButtons
 {
 public:
-    InputButtons() 
-    {
-        pBtnPressed = &bufferKeypad;        
-    }
+    InputButtons()          {        pBtnPressed = &bufferKeypad;         }
 
-    void aknNewInput()
-    {
-        btnAcptNewInput = false;
-    }
+    void aknNewInput()      {        btnAcptNewInput = false;             }
 
- //wenn called un NewButton isch reg, sprung swithcState, state setzten donn wieder zrug in die stateMaschine 
     void checkForNewButtonPress()                 
     {
-        switch (bufferKeypad = read_LCD_buttons())
+        switch (bufferKeypad = getKeyAnalog())
         {
-        case btnNONE:                   btnAcptNewInput = true;                  break;
+        case btnNONE:               btnAcptNewInput = true;                    break;
 
-        case btnRIGHT:              if (btnAcptNewInput == false)                break;
-            switchState(pBtnPressed);
-            // pSwitchState(pBtnPressed);          // kp wieso i gmoant hon i brauch des, bleib erst mol do
-            btnAcptNewInput = false;
-            break;
-
-        case btnLEFT:                if (btnAcptNewInput == false)               break;
+        case btnRIGHT:            if (btnAcptNewInput == false)                break;
             switchState(pBtnPressed);
             btnAcptNewInput = false;
             break;
 
-        case btnSELECT:             if (btnAcptNewInput == false)                break;
+        case btnLEFT:            if (btnAcptNewInput == false)                   break;
             switchState(pBtnPressed);
             btnAcptNewInput = false;
             break;
 
-        case btnUP:                 if (btnAcptNewInput == false)                break;
+        case btnSELECT:            if (btnAcptNewInput == false)                 break;
             switchState(pBtnPressed);
             btnAcptNewInput = false;
             break;
 
-        case btnDOWN:               if (btnAcptNewInput == false)                break;
+        case btnUP:            if (btnAcptNewInput == false)                     break;
+            switchState(pBtnPressed);
+            btnAcptNewInput = false;
+            break;
+
+        case btnDOWN:            if (btnAcptNewInput == false)                    break;
             switchState(pBtnPressed);
             btnAcptNewInput = false;
             break;
@@ -55,19 +47,14 @@ public:
     }
 
 private:
-    int lcd_key = 0;
+    int *pBtnPressed;            //Pointer auf keyValue, werd dor switchState geben fürn switchCheck
+
     int keyAnalog = 0;
     int bufferKeypad = 0;
 
     bool btnAcptNewInput = false;
 
-
-    void (*pSwitchState)(int *); //Pointer auf die SwitchState
-
-    int *pBtnPressed;            //Pointer auf keyValue, werd dor switchState geben fürn switchCheck
-
-
-    int read_LCD_buttons()
+    int getKeyAnalog()
     {
         keyAnalog = analogRead(0); // read the value from the sensor
         if (keyAnalog > 1000)              return btnNONE;
