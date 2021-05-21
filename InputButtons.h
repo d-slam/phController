@@ -9,11 +9,7 @@
 class InputButtons
 {
 public:
-    InputButtons(void (*_pSwitchState)(int*)) 
-    {
-
-        pSwitchState = _pSwitchState;
-    }
+    InputButtons(void (*_pSwitchState)(int *)) : pSwitchState(_pSwitchState) {    }
 
 private:
     void (*pSwitchState)(int *);

@@ -61,12 +61,12 @@ void switchState(int* pButton)                //dereferenziert in keypointer und
   }
 }
 
-void (*pSwitchState)(int*);
+void (*pSwitchState)(int*);                 //fkt pointer auf die switchState
 
 
 //VERY!GLOBALS===============================================
-
 #include "LCDScreen.h"
+
 #include "InputButtons.h"
 #include "PhSonde.h"
 
@@ -83,7 +83,8 @@ float phSollThres = 0.5;
 LCDScreen lcdScreen(&phLast, &phSoll, &phSollThres);
 PhSonde phSonde;
 
-InputButtons inputButtons(pSwitchState);
+//BUTTONSHIT===============================================
+InputButtons inputButtons(pSwitchState);                    //fkt pointer gebmor in contructor mit
 
 bool btnNewIncAllowedFlag = false;
 bool btnNewDecAllowedFlag = false;
@@ -146,12 +147,17 @@ void checkForNewButtonPress()                 //START von dor mascihine....wenn 
 //SETUP===============================================
 void setup()
 {
-  pSwitchState = &switchState;
-
-  pinMode(MOTORGATE, OUTPUT);
   Serial.begin(9600);
   Serial.println("Serial hüü!");
+
+  Serial.println((int)pSwitchState);
+  pSwitchState = &switchState;                        //wäms die &switchState auf fkt pointer   
+  Serial.println((int)pSwitchState);    //scheint zu loden
+
+
+
   lcdScreen.drawStartScreen();
+  pinMode(MOTORGATE, OUTPUT);
 }
 
 //LOOP==========================================================
@@ -160,8 +166,6 @@ void loop()
   stateMachine();
   delay(20);
 }
-
-//MyMethodes==========================================================
 
 //ACHTUNG!STATMASCINE===============================================
 void stateMachine() //~~~♪callMe from main()
@@ -177,6 +181,7 @@ void stateMachine() //~~~♪callMe from main()
   Serial.println("hey run red");
     doRUN_RED();
     checkForNewButtonPress();
+
     incSYS_RUN = incSYS_RUN - 1;
     if (incSYS_RUN == 0)
       state = SYS_RUN_INTERFACE;
@@ -185,6 +190,7 @@ void stateMachine() //~~~♪callMe from main()
   case SYS_RUN_YELLOW:
     doRUN_YELLOW();
     checkForNewButtonPress();
+
     incSYS_RUN = incSYS_RUN - 1;
     if (incSYS_RUN == 0)
       state = SYS_RUN_INTERFACE;
@@ -193,6 +199,7 @@ void stateMachine() //~~~♪callMe from main()
   case SYS_RUN_GREEN:
     doRUN_GREEN();
     checkForNewButtonPress();
+
     incSYS_RUN = incSYS_RUN - 1;
     if (incSYS_RUN == 0)
       state = SYS_RUN_INTERFACE;
