@@ -25,6 +25,8 @@ LCDScreen lcdScreen(&phLast, &phSoll, &phSollThres);
 
 PhSonde phSonde;
 
+InputButtons inputButtons;
+
 bool btnNewIncAllowedFlag = false;
 bool btnNewDecAllowedFlag = false;
 bool btnNewInputAllowedFlag = false;
@@ -36,16 +38,16 @@ int incSYS_RUN = 0;
 
 int* pBtnPressed;
 
-int* ptest;
-int a=4;
 
 //BtnInterface===============================================
 void checkForNewButtonPress()
 {
+  int tempLcd_key;
 
-  lcd_key = read_LCD_buttons(); //read BUTTON
+  tempLcd_key = inputButtons.read_LCD_buttons(); //read BUTTON
+  pBtnPressed = &tempLcd_key;
 
-  switch (lcd_key) //check welcher BUTTON?
+  switch (tempLcd_key) //check welcher BUTTON?
   {
   case btnNONE:
     btnNewInputAllowedFlag = true;
@@ -154,7 +156,6 @@ void setup()
   Serial.begin(9600);
   Serial.println("Serial hüü!");
   lcdScreen.drawStartScreen();
-  pBtnPressed = &lcd_key;
 }
 
 //LOOP==========================================================
