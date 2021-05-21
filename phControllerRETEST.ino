@@ -24,7 +24,7 @@ PhSonde phSonde;
 
 bool incFlag = false;
 bool decFlag = false;
-bool btnFirstFlag = false;
+bool btnNewInputAllowedFlag = false;
 
 state_t state = SYS_WAIT; //init State
 
@@ -62,6 +62,7 @@ void stateMachine() //~~~♪callMe from main()
     break;
 
   case SYS_RUN_RED:
+  Serial.println("hey run red");
     doRUN_RED();
     checkForNewButtonPress();
     incSYS_RUN = incSYS_RUN - 1;
@@ -132,72 +133,46 @@ void stateMachine() //~~~♪callMe from main()
 
 }
 //MyMethodes==========================================================
-
-//stateMaschine-doFnkBlock//////////////////////////////////
-void doSYS_RUN_INTERFACE()
-{
-  phLast = phSonde.getPhIst();
-  if      (phLast >= phSoll + phSollThres)    {    state = SYS_RUN_RED;     }
-  else if (phLast >= phSoll)                  {    state = SYS_RUN_YELLOW;  }
-  else if (phLast < phSoll)                   {    state = SYS_RUN_GREEN;   }
-}
-
-void doRUN_RED()                              {    digitalWrite(MOTORGATE, HIGH);   }
-void doRUN_YELLOW()                           {    digitalWrite(MOTORGATE, LOW);    }
-void doRUN_GREEN()                            {    digitalWrite(MOTORGATE, LOW);    }
-
-void doSYS_WAIT()
-{
-  digitalWrite(MOTORGATE, LOW);
-  phLast = phSonde.getPhIst();
-}
-
-void doSYS_SET_SOLL()
-{
-  if (incFlag == true)    incSoll();
-  if (decFlag == true)    decSoll();
-}
-void doSYS_SET_THRES()
-{
-  if (incFlag == true)    incThres();
-  if (decFlag == true)    decThres();
-}
-
-void doSYS_CAL(){}
-void doCAL_PH4()                    {  phLast = phSonde.getPhIst();}
-void doCAL_PH7()
-{
-  phLast = phSonde.getPhIst();
-  phSonde.setVolt4(volt);
-}
-void doCAL_CONF()
-{
-  phSonde.setVolt7(volt);
-  phSonde.calcDelta();
-}
-void doCAL_OK()                    { phSonde.applyCallibration(); }
-
-
-
-
 //BtnInterface===============================================
 void checkForNewButtonPress()
 {
-  lcd_key = read_LCD_buttons();   //read BUTTON
+  lcd_key = read_LCD_buttons(); //read BUTTON
 
-  switch (lcd_key)                //check welcher BUTTON?
+  switch (lcd_key) //check welcher BUTTON?
   {
-  //wenn noBUTTON, [btnFirstFlagFALSE} u EXIT; wenn button PRESS [DO] u [btnFirstFlagFALSE]
-  case btnNONE:    btnFirstFlag = false;    break;
+  case btnNONE:
+    btnNewInputAllowedFlag = true;
+    break;
 
-  //wenn BUTTON, check ob schun aknowledged->donn break, SUSCHT resetFLAG u DOSHIT()
-  case btnRIGHT:        if (btnFirstFlag == false)      break;
-  case btnLEFT:         if (btnFirstFlag == false)      break;
-  case btnSELECT:       if (btnFirstFlag == false)      break;
-  case btnUP:           if (btnFirstFlag == false)      break;
-  case btnDOWN:         if (btnFirstFlag == false)      break;
-    btnFirstFlag = false; //resetFLAG
-    doNewButton(lcd_key);    //DOSHIT
+  case btnRIGHT:
+    if (btnNewInputAllowedFlag == false)      break;
+      Serial.println("rechts drückt!");
+    doNewButton(lcd_key); 
+    btnNewInputAllowedFlag = false;
+    break;
+
+  case btnLEFT:
+    if (btnNewInputAllowedFlag == false)      break;
+    doNewButton(lcd_key); 
+    btnNewInputAllowedFlag = false;
+    break;
+
+  case btnSELECT:
+    if (btnNewInputAllowedFlag == false)      break;
+    doNewButton(lcd_key); 
+    btnNewInputAllowedFlag = false;
+    break;
+
+  case btnUP:
+    if (btnNewInputAllowedFlag == false)      break;
+    doNewButton(lcd_key); 
+    btnNewInputAllowedFlag = false;
+    break;
+
+  case btnDOWN:
+    if (btnNewInputAllowedFlag == false)      break;
+    doNewButton(lcd_key); 
+    btnNewInputAllowedFlag = false;
     break;
   }
 
@@ -205,11 +180,14 @@ void checkForNewButtonPress()
 //MENUMAP===============================================
 void doNewButton(int keyPressed)
 {
+
   switch (state)
   {
-  case SYS_RUN_INTERFACE:
-    if (keyPressed == btnRIGHT)      state = SYS_WAIT;
-    break;
+
+  case SYS_RUN_INTERFACE:     if (keyPressed == btnRIGHT)      state = SYS_WAIT;    break;
+  case SYS_RUN_RED:           if (keyPressed == btnRIGHT)      state = SYS_WAIT;    break;
+  case SYS_RUN_YELLOW:        if (keyPressed == btnRIGHT)      state = SYS_WAIT;    break;
+  case SYS_RUN_GREEN:         if (keyPressed == btnRIGHT)      state = SYS_WAIT;    break;
 
   case SYS_WAIT:
     if (keyPressed == btnRIGHT)      state = SYS_SET_SOLL;
@@ -253,6 +231,52 @@ void doNewButton(int keyPressed)
   case CAL_OK:    state = SYS_WAIT;    break;
   }
 }
+
+//stateMaschine-doFnkBlock//////////////////////////////////
+void doSYS_RUN_INTERFACE()
+{
+  phLast = phSonde.getPhIst();
+  if      (phLast >= phSoll + phSollThres)    {    state = SYS_RUN_RED;     }
+  else if (phLast >= phSoll)                  {    state = SYS_RUN_YELLOW;  }
+  else if (phLast < phSoll)                   {    state = SYS_RUN_GREEN;   }
+}
+
+void doRUN_RED()                              {    digitalWrite(MOTORGATE, HIGH);   }
+void doRUN_YELLOW()                           {    digitalWrite(MOTORGATE, LOW);    }
+void doRUN_GREEN()                            {    digitalWrite(MOTORGATE, LOW);    }
+
+void doSYS_WAIT()
+{
+  digitalWrite(MOTORGATE, LOW);
+  phLast = phSonde.getPhIst();
+
+}
+
+void doSYS_SET_SOLL()
+{
+  if (incFlag == true)    incSoll();
+  if (decFlag == true)    decSoll();
+}
+void doSYS_SET_THRES()
+{
+  if (incFlag == true)    incThres();
+  if (decFlag == true)    decThres();
+}
+
+void doSYS_CAL(){}
+void doCAL_PH4()                    {  phLast = phSonde.getPhIst();}
+void doCAL_PH7()
+{
+  phLast = phSonde.getPhIst();
+  phSonde.setVolt4(volt);
+}
+void doCAL_CONF()
+{
+  phSonde.setVolt7(volt);
+  phSonde.calcDelta();
+}
+void doCAL_OK()                    { phSonde.applyCallibration(); }
+
 
 void incSoll() { phSoll += 0.1; }
 void decSoll() { phSoll -= 0.1; }
