@@ -9,24 +9,20 @@
 class InputButtons
 {
 public:
-    InputButtons(void (*_pSwitchState)(int *)) : pSwitchState(_pSwitchState) 
+    InputButtons() 
     {
-        pBtnPressed = &bufferKeypad;
+        pBtnPressed = &bufferKeypad;        
     }
 
-
-void aknNewInput()
-{
-    btnAcptNewInput = false;
-}
-
-//START von dor mascihine....wenn net geprellt, gebmor in keypointer weiter an SWITCHSTATE
-//seint so zu lafn...
-    void checkForNewButtonPress()           
+    void aknNewInput()
     {
-        bufferKeypad = read_LCD_buttons();
-        
-        switch (bufferKeypad)                  
+        btnAcptNewInput = false;
+    }
+
+ //wenn called un NewButton isch reg, sprung swithcState, state setzten donn wieder zrug in die stateMaschine 
+    void checkForNewButtonPress()                 
+    {
+        switch (bufferKeypad = read_LCD_buttons())
         {
         case btnNONE:                   btnAcptNewInput = true;                  break;
 
@@ -60,25 +56,26 @@ void aknNewInput()
 
 private:
     int lcd_key = 0;
-    int adc_key_in = 0;
+    int keyAnalog = 0;
     int bufferKeypad = 0;
 
     bool btnAcptNewInput = false;
-    
+
 
     void (*pSwitchState)(int *); //Pointer auf die SwitchState
-    int *pBtnPressed;            //Pointer auf keyValue
+
+    int *pBtnPressed;            //Pointer auf keyValue, werd dor switchState geben fürn switchCheck
 
 
     int read_LCD_buttons()
     {
-        adc_key_in = analogRead(0); // read the value from the sensor
-        if (adc_key_in > 1000)              return btnNONE;
-        if (adc_key_in < 50)                return btnRIGHT;
-        if (adc_key_in < 250)               return btnUP;
-        if (adc_key_in < 450)               return btnDOWN;
-        if (adc_key_in < 650)               return btnLEFT;
-        if (adc_key_in < 850)               return btnSELECT;
+        keyAnalog = analogRead(0); // read the value from the sensor
+        if (keyAnalog > 1000)              return btnNONE;
+        if (keyAnalog < 50)                return btnRIGHT;
+        if (keyAnalog < 250)               return btnUP;
+        if (keyAnalog < 450)               return btnDOWN;
+        if (keyAnalog < 650)               return btnLEFT;
+        if (keyAnalog < 850)               return btnSELECT;
                                             return btnNONE; // when all others fail, return this...
     }
 };
