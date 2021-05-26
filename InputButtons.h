@@ -21,28 +21,23 @@ public:
         case btnNONE:               btnAcptNewInput = true;                    break;
 
         case btnRIGHT:            if (btnAcptNewInput == false)                break;
-            switchState(bufferKeypad);
-            btnAcptNewInput = false;
+            btnAcptNewInput = callback(bufferKeypad);
             break;
 
         case btnLEFT:            if (btnAcptNewInput == false)                   break;
-            switchState(bufferKeypad);
-            btnAcptNewInput = false;
+            btnAcptNewInput = callback(bufferKeypad);
             break;
 
         case btnSELECT:            if (btnAcptNewInput == false)                 break;
-            switchState(bufferKeypad);
-            btnAcptNewInput = false;
+            btnAcptNewInput = callback(bufferKeypad);
             break;
 
         case btnUP:            if (btnAcptNewInput == false)                     break;
-            switchState(bufferKeypad);
-            btnAcptNewInput = false;
+            btnAcptNewInput = callback(bufferKeypad);
             break;
 
         case btnDOWN:            if (btnAcptNewInput == false)                    break;
-            switchState(bufferKeypad);
-            btnAcptNewInput = false;
+            btnAcptNewInput = callback(bufferKeypad);
             break;
         }
     }
