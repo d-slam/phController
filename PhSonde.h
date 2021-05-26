@@ -10,7 +10,6 @@ class PhSonde
 {
 public:
 
-
     float getPhIst()
     {
         float volt = sampleVoltage();
@@ -18,15 +17,9 @@ public:
         return phIst;
     }
 
-    void setVolt4(float v)
-    {
-        volt4 = v;
-    }
+    void setVolt4(float v)    {        volt4 = v;    }
 
-    void setVolt7(float v)
-    {
-        volt7 = v;
-    }
+    void setVolt7(float v)    {        volt7 = v;    }
 
     void calcDelta()
     {
