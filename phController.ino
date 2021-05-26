@@ -13,62 +13,60 @@ void switchState(int* pButton)
 {
   switch (state)  {
 
-  case SYS_RUN_INTERFACE:     if (*pButton == btnRIGHT)      state = SYS_WAIT;    break;
-  case SYS_RUN_RED:           if (*pButton == btnRIGHT)      state = SYS_WAIT;    break;
-  case SYS_RUN_YELLOW:        if (*pButton == btnRIGHT)      state = SYS_WAIT;    break;
-  case SYS_RUN_GREEN:         if (*pButton == btnRIGHT)      state = SYS_WAIT;    break;
-  case SYS_RUN_ERROR:         if (*pButton == btnRIGHT)      state = SYS_WAIT;    break;
+  case SYS_RUN_INTERFACE:     if (*pButton == btnRIGHT)      state = SYS_WAIT;              break;
+  case SYS_RUN_RED:           if (*pButton == btnRIGHT)      state = SYS_WAIT;              break;
+  case SYS_RUN_YELLOW:        if (*pButton == btnRIGHT)      state = SYS_WAIT;              break;
+  case SYS_RUN_GREEN:         if (*pButton == btnRIGHT)      state = SYS_WAIT;              break;
+  case SYS_RUN_ERROR:         if (*pButton == btnRIGHT)      state = SYS_WAIT;              break;
 
   case SYS_WAIT:
-    if (*pButton == btnRIGHT)                               state = SYS_SET_SOLL;
-    if (*pButton == btnLEFT)                                state = SYS_RUN_INTERFACE;
-    break;
+                              if (*pButton == btnRIGHT)      state = SYS_SET_SOLL;
+                              if (*pButton == btnLEFT)       state = SYS_RUN_INTERFACE;
+                                                                                            break;
 
   case SYS_SET_SOLL:
-    if (*pButton == btnRIGHT)                               state = SYS_SET_THRES;
-    if (*pButton == btnLEFT)                                state = SYS_WAIT;
-    if (*pButton == btnUP)                                  state = INC_SET_SOLL;
-    if (*pButton == btnDOWN)                                state = DEC_SET_SOLL;
-    break;
+                              if (*pButton == btnRIGHT)      state = SYS_SET_THRES;
+                              if (*pButton == btnLEFT)       state = SYS_WAIT;
+                              if (*pButton == btnUP)         state = INC_SET_SOLL;
+                              if (*pButton == btnDOWN)       state = DEC_SET_SOLL;
+                                                                                            break;
 
   case SYS_SET_THRES:
-    if (*pButton == btnRIGHT)                               state = SYS_CAL;
-    if (*pButton == btnLEFT)                                state = SYS_SET_SOLL;
-    if (*pButton == btnUP)                                  state = INC_SET_THRES;
-    if (*pButton == btnDOWN)                                state = DEC_SET_THRES;
-    break;
+                              if (*pButton == btnRIGHT)      state = SYS_CAL;
+                              if (*pButton == btnLEFT)       state = SYS_SET_SOLL;
+                              if (*pButton == btnUP)         state = INC_SET_THRES;
+                              if (*pButton == btnDOWN)       state = DEC_SET_THRES;
+                                                                                            break;
 
   case SYS_CAL:
-    if (*pButton == btnLEFT)                              state = SYS_SET_THRES;
-    if (*pButton == btnSELECT)                            state = CAL_PH4;
-    break;
+                              if (*pButton == btnLEFT)       state = SYS_SET_THRES;
+                              if (*pButton == btnSELECT)     state = CAL_PH4;
+                                                                                            break;
 
   case CAL_PH4:
-    if (*pButton == btnSELECT)                            state = CAL_PH7;
-    if (*pButton == btnLEFT)                              state = SYS_CAL;
-    break;
+                              if (*pButton == btnSELECT)     state = CAL_PH7;
+                              if (*pButton == btnLEFT)       state = SYS_CAL;
+                                                                                            break;
 
   case CAL_PH7:
-    if (*pButton == btnSELECT)                            state = CAL_CONF;
-    if (*pButton == btnLEFT)                              state = SYS_CAL;
-    break;
+                              if (*pButton == btnSELECT)     state = CAL_CONF;
+                              if (*pButton == btnLEFT)       state = SYS_CAL;
+                                                                                            break;
 
   case CAL_CONF:
-    if (*pButton == btnSELECT)                            state = CAL_OK;
-    if (*pButton == btnLEFT)                              state = SYS_CAL;
-    break;
+                              if (*pButton == btnSELECT)     state = CAL_OK;
+                              if (*pButton == btnLEFT)       state = SYS_CAL;
+                                                                                            break;
 
-  case CAL_OK:                                            state = SYS_WAIT;    break;
+  case CAL_OK:                                               state = SYS_WAIT;              break;
   }
 
 }
 
 //VERY!GLOBALS===============================================
-#include "LCDScreen.h"
+#include "OutputLCDScreen.h"
 #include "InputButtons.h"
 #include "PhSonde.h"
-
-#include "Outputs.h"
 
 //GLOBALS===============================================
 float volt = 0.0;
@@ -80,12 +78,10 @@ float phSollThres = 0.5;
 int decSYS_RUN = 0;   //wieviel durchläufe bis phSoll<=>phIst check
 
 //MODUES===============================================
-LCDScreen lcdScreen(&phLast, &phSoll, &phSollThres);
+OutputLCDScreen outputLCDScreen(&phLast, &phSoll, &phSollThres);
 PhSonde phSonde;
 
 InputButtons inputButtons;  
-
-Outputs outputs;
 
 //SETUP===============================================
 void setup()
@@ -93,7 +89,7 @@ void setup()
   Serial.begin(9600);
   Serial.println("Serial hüü!");  
 
-  lcdScreen.drawStartScreen();
+  outputLCDScreen.drawStartScreen();
   pinMode(MOTORGATE, OUTPUT);
 }
 
@@ -101,7 +97,7 @@ void setup()
 void loop()
 {  
   inputButtons.checkForNewButtonPress();
-  lcdScreen.redraw(state);
+  outputLCDScreen.redraw(state);
 
   executeState(state);
 
