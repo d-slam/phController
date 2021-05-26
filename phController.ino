@@ -66,7 +66,7 @@ void switchState(int* pButton)
 //VERY!GLOBALS===============================================
 #include "OutputLCDScreen.h"
 #include "InputButtons.h"
-#include "PhSonde.h"
+#include "InputPhSonde.h"
 
 //GLOBALS===============================================
 float volt = 0.0;
@@ -79,7 +79,7 @@ int decSYS_RUN = 0;   //wieviel durchläufe bis phSoll<=>phIst check
 
 //MODUES===============================================
 OutputLCDScreen outputLCDScreen(&phLast, &phSoll, &phSollThres);
-PhSonde phSonde;
+InputPhSonde inputPhSonde;
 
 InputButtons inputButtons;  
 
@@ -151,7 +151,7 @@ void executeState(state_t s)
 ////////OOOOODER cal isch kaputt, schmeis olm NA--->erster sell checkn
 void doSYS_RUN_INTERFACE()          
 {
-  phLast = phSonde.getPhIst();
+  phLast = inputPhSonde.getPhIst();
 
   if      (phLast >= phSoll + phSollThres)    {    state = SYS_RUN_RED;     }
   else if (phLast >= phSoll)                  {    state = SYS_RUN_YELLOW;  }
@@ -169,7 +169,7 @@ void doSYS_RUN_ERROR()                         { digitalWrite(MOTORGATE, LOW);  
 void doSYS_WAIT()
 {
   digitalWrite(MOTORGATE, LOW);
-  phLast = phSonde.getPhIst();
+  phLast = inputPhSonde.getPhIst();
 }
 
 void doSYS_SET_SOLL() {}
@@ -188,21 +188,21 @@ void doSYS_CAL(){}
 
 void doCAL_PH4()
 {
-  phLast = phSonde.getPhIst();
+  phLast = inputPhSonde.getPhIst();
 }
 void doCAL_PH7()
 {
-  phLast = phSonde.getPhIst();
-  phSonde.setVolt4(volt);
+  phLast = inputPhSonde.getPhIst();
+  inputPhSonde.setVolt4(volt);
 }
 void doCAL_CONF()
 {
-  phSonde.setVolt7(volt);
-  phSonde.calcDelta();
+  inputPhSonde.setVolt7(volt);
+  inputPhSonde.calcDelta();
 }
 void doCAL_OK()
 {
-  phSonde.applyCallibration();
+  inputPhSonde.applyCallibration();
 }
 
 void incSoll() { phSoll += 0.1; }
