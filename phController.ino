@@ -109,38 +109,79 @@ void executeState(state_t s)
 {
  switch (state)  {
 
-  case SYS_RUN_INTERFACE:
-    doSYS_RUN_INTERFACE();          //kurz check wia IST zu SOLL steat donn subito flag auf RED,YELLOW,GREEN
-    decSYS_RUN = 5;                 //soviele durchläufe bis neuerCheck
-    break;
+ case SYS_RUN_INTERFACE:
+   doSYS_RUN_INTERFACE();
+   decSYS_RUN = 5;
+   break;
 
-  case SYS_RUN_RED:    doRUN_RED();
-    decSYS_RUN -= 1;    if (decSYS_RUN == 0)      state = SYS_RUN_INTERFACE;    break;
+ case SYS_RUN_RED:
+   doRUN_RED();
+   decSYS_RUN -= 1;
+   if (decSYS_RUN == 0)
+     state = SYS_RUN_INTERFACE;
+   break;
 
-  case SYS_RUN_YELLOW:    doRUN_YELLOW();
-    decSYS_RUN -= 1;    if (decSYS_RUN == 0)      state = SYS_RUN_INTERFACE;    break;
+ case SYS_RUN_YELLOW:
+   doRUN_YELLOW();
+   decSYS_RUN -= 1;
+   if (decSYS_RUN == 0)
+     state = SYS_RUN_INTERFACE;
+   break;
 
-  case SYS_RUN_GREEN:    doRUN_GREEN();
-    decSYS_RUN -= 1;    if (decSYS_RUN == 0)      state = SYS_RUN_INTERFACE;    break;
+ case SYS_RUN_GREEN:
+   doRUN_GREEN();
+   decSYS_RUN -= 1;
+   if (decSYS_RUN == 0)
+     state = SYS_RUN_INTERFACE;
+   break;
 
-  case SYS_RUN_ERROR:    doSYS_RUN_ERROR();                                     break;
+ case SYS_RUN_ERROR:
+   doSYS_RUN_ERROR();
+   break;
 
+ case SYS_WAIT:
+   doSYS_WAIT();
+   break;
 
-  case SYS_WAIT:          doSYS_WAIT();                                          break;
+ case SYS_SET_SOLL:
+   doSYS_SET_SOLL();
+   break;
+ case INC_SET_SOLL:
+   doINC_SET_SOLL();
+   state = SYS_SET_SOLL;
+   break;
+ case DEC_SET_SOLL:
+   doDEC_SET_SOLL();
+   state = SYS_SET_SOLL;
+   break;
 
-  case SYS_SET_SOLL:    doSYS_SET_SOLL();                             break;
-  case INC_SET_SOLL:    doINC_SET_SOLL();    state = SYS_SET_SOLL;    break;
-  case DEC_SET_SOLL:    doDEC_SET_SOLL();    state = SYS_SET_SOLL;    break;
+ case SYS_SET_THRES:
+   doSYS_SET_THRES();
+   break;
+ case INC_SET_THRES:
+   doINC_SET_THRES();
+   state = SYS_SET_THRES;
+   break;
+ case DEC_SET_THRES:
+   doDEC_SET_THRES();
+   state = SYS_SET_THRES;
+   break;
 
-  case SYS_SET_THRES:    doSYS_SET_THRES();                              break;
-  case INC_SET_THRES:    doINC_SET_THRES();    state = SYS_SET_THRES;    break;
-  case DEC_SET_THRES:    doDEC_SET_THRES();    state = SYS_SET_THRES;    break;
-
-  case SYS_CAL:           doSYS_CAL();          break;
-  case CAL_PH4:           doCAL_PH4();          break;
-  case CAL_PH7:           doCAL_PH7();          break;
-  case CAL_CONF:          doCAL_CONF();         break;   
-  case CAL_OK:            doCAL_OK();           break;   //eventuell delay(1500) donn state == SYS_WAIT
+ case SYS_CAL:
+   doSYS_CAL();
+   break;
+ case CAL_PH4:
+   doCAL_PH4();
+   break;
+ case CAL_PH7:
+   doCAL_PH7();
+   break;
+ case CAL_CONF:
+   doCAL_CONF();
+   break;
+ case CAL_OK:
+   doCAL_OK();
+   break; //eventuell delay(1500) donn state == SYS_WAIT
   }
 
 }
@@ -162,8 +203,7 @@ void doSYS_RUN_INTERFACE()
 void doRUN_RED()                              {    digitalWrite(MOTORGATE, HIGH);   }
 void doRUN_YELLOW()                           {    digitalWrite(MOTORGATE, LOW);    }
 void doRUN_GREEN()                            {    digitalWrite(MOTORGATE, LOW);    }
-
-void doSYS_RUN_ERROR()                         { digitalWrite(MOTORGATE, LOW);      }
+void doSYS_RUN_ERROR()                        {    digitalWrite(MOTORGATE, LOW);    }
 
 
 void doSYS_WAIT()
@@ -173,15 +213,11 @@ void doSYS_WAIT()
 }
 
 void doSYS_SET_SOLL() {}
-
 void doINC_SET_SOLL() { incSoll(); }
-
 void doDEC_SET_SOLL() { decSoll(); }
 
 void doSYS_SET_THRES() {}
-
 void doINC_SET_THRES() { incThres(); }
-
 void doDEC_SET_THRES() { decThres(); }
 
 void doSYS_CAL(){}
