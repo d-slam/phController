@@ -1,10 +1,10 @@
 /*
-  LCDScreen - Library for dassi eppes sig do
+  OutputLCDScreen - Library for dassi eppes sig do
   Created by Mir diocane, November 66, 2021.
   Released into the public domain.
 */
-#ifndef LCDScreen_h
-#define LCDScreen_h
+#ifndef OutputLCDScreen_h
+#define OutputLCDScreen_h
 
 // #include "Arduino.h" //lei für strings, honni ober im mom koane
 
@@ -13,9 +13,9 @@
 //LCD_INIT============================================
 LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
 
-class LCDScreen {
+class OutputLCDScreen {
 public:
-  LCDScreen(float *_phLast, float *_phSoll, float *_phSollThres)
+  OutputLCDScreen(float *_phLast, float *_phSoll, float *_phSollThres)
       : pPhLast(_phLast), pPhSoll(_phSoll), pPhSollThres(_phSollThres)
             {    lcd.begin(16, 2);  }
 
@@ -24,9 +24,10 @@ public:
     lcd.clear();
     drawLeftScreen();
     switch (state)    {
-    case SYS_RUN_RED:       drawSYS_RUN_RED();          break;
-    case SYS_RUN_YELLOW:    drawSYS_RUN_YELLOW();       break;
-    case SYS_RUN_GREEN:     drawSYS_RUN_GREEN();        break;
+    case RUN_RED:           drawSYS_RUN_RED();      break;
+    case RUN_YELLOW:        drawSYS_RUN_YELLOW();   break;
+    case RUN_GREEN:         drawSYS_RUN_GREEN();    break;
+    case RUN_ERROR:         drawSYS_RUN_ERROR();    break;
     case SYS_WAIT:          drawSYS_WAIT();         break;
     case SYS_SET_SOLL:      drawSYS_SET_SOLL();     break;
     case SYS_SET_THRES:     drawSYS_SET_THRES();    break;
@@ -54,10 +55,16 @@ private:
   }
   void drawSYS_RUN_GREEN()
   {
-    writeAtXY(
-        "Halte", 8, 0);
+    writeAtXY("Halte", 8, 0);
     drawSollAndThres();
   }
+
+  void drawSYS_RUN_ERROR()
+  {
+    writeAtXY("ERROR", 8, 0);
+    writeAtXY("pls ReCal", 7, 1);
+  }
+
   void drawSollAndThres()
   {
     writeFloatAtXY(*pPhSoll, 8, 1);

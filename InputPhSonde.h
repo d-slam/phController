@@ -3,35 +3,29 @@
   Created by Mir diocane, November 66, 2021.
   Released into the public domain.
 */
-#ifndef PhSonde_h
-#define PhSonde_h
+#ifndef InputPhSonde_h
+#define InputPhSonde_h
 
-class PhSonde
+class InputPhSonde
 {
 public:
+
     float getPhIst()
     {
-        sampleVoltage();
+        volt = sampleVoltage();
         phIst = calDelta * volt + calOffset;
         return phIst;
     }
 
-    // void smoothPh()
-    // {
-    //     int nSmooth = 20;
-    //     vecBuffer += phIst;
-    //     incBuffer++;
-    //     if (incBuffer >= nSmooth)
-    //     {
-    //         phLast = vecBuffer / nSmooth;
-    //         newValFlag = true;
-    //         incBuffer = 0;
-    //         vecBuffer = 0;
-    //     }
-    // }
+    void setVolt4()
+    {
+        volt4 = volt;
+    }
+    void setVolt7()
+    {
+        volt7 = volt;
+    }
 
-    void setVolt4(float v) { volt4 = v; }
-    void setVolt7(float v) { volt7 = v; }
     void calcDelta()
     {
         tempCalDelta = (7 - 4) / (volt7 - volt4);
@@ -47,22 +41,17 @@ private:
     float tempCalDelta = 2.19;
     float tempCalOffset = 2.85;
 
+    float volt = 0.0;
     float volt7 = 0.0;
     float volt4 = 0.0;
-    float volt = 0.0;
 
     float phIst = 0.0;
     float phLast = 0.0;
 
     float calDelta = 2.19;
     float calOffset = 2.85;
-    
 
-    // bool newValFlag = false;
-    // int incBuffer = 0;
-    // float vecBuffer = 0;
-
-    void sampleVoltage()
+    float sampleVoltage()
     {
         int sampleBuffer[10];
         int temp = 0;
@@ -89,7 +78,8 @@ private:
         for (int i = 2; i < 8; i++)
             avgVal += sampleBuffer[i];
 
-        volt = ((float)avgVal * 5.0 / 1024 / 6);
+        float volt = ((float)avgVal * 5.0 / 1024 / 6);
+        return volt;
     }
 };
 
