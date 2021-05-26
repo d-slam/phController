@@ -9,29 +9,25 @@
 class PhSonde
 {
 public:
+
+
     float getPhIst()
     {
-        sampleVoltage();
+        float volt = sampleVoltage();
         phIst = calDelta * volt + calOffset;
         return phIst;
     }
 
-    // void smoothPh()
-    // {
-    //     int nSmooth = 20;
-    //     vecBuffer += phIst;
-    //     incBuffer++;
-    //     if (incBuffer >= nSmooth)
-    //     {
-    //         phLast = vecBuffer / nSmooth;
-    //         newValFlag = true;
-    //         incBuffer = 0;
-    //         vecBuffer = 0;
-    //     }
-    // }
+    void setVolt4(float v)
+    {
+        volt4 = v;
+    }
 
-    void setVolt4(float v) { volt4 = v; }
-    void setVolt7(float v) { volt7 = v; }
+    void setVolt7(float v)
+    {
+        volt7 = v;
+    }
+
     void calcDelta()
     {
         tempCalDelta = (7 - 4) / (volt7 - volt4);
@@ -49,20 +45,16 @@ private:
 
     float volt7 = 0.0;
     float volt4 = 0.0;
-    float volt = 0.0;
+
+    // float volt = 0.0;
 
     float phIst = 0.0;
     float phLast = 0.0;
 
     float calDelta = 2.19;
     float calOffset = 2.85;
-    
 
-    // bool newValFlag = false;
-    // int incBuffer = 0;
-    // float vecBuffer = 0;
-
-    void sampleVoltage()
+    float sampleVoltage()
     {
         int sampleBuffer[10];
         int temp = 0;
@@ -89,7 +81,8 @@ private:
         for (int i = 2; i < 8; i++)
             avgVal += sampleBuffer[i];
 
-        volt = ((float)avgVal * 5.0 / 1024 / 6);
+        float volt = ((float)avgVal * 5.0 / 1024 / 6);
+        return volt;
     }
 };
 
