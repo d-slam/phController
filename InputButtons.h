@@ -21,33 +21,33 @@ public:
         case btnNONE:               btnAcptNewInput = true;                    break;
 
         case btnRIGHT:            if (btnAcptNewInput == false)                break;
-            switchState(pBtnPressed);
+            switchState(bufferKeypad);
             btnAcptNewInput = false;
             break;
 
         case btnLEFT:            if (btnAcptNewInput == false)                   break;
-            switchState(pBtnPressed);
+            switchState(bufferKeypad);
             btnAcptNewInput = false;
             break;
 
         case btnSELECT:            if (btnAcptNewInput == false)                 break;
-            switchState(pBtnPressed);
+            switchState(bufferKeypad);
             btnAcptNewInput = false;
             break;
 
         case btnUP:            if (btnAcptNewInput == false)                     break;
-            switchState(pBtnPressed);
+            switchState(bufferKeypad);
             btnAcptNewInput = false;
             break;
 
         case btnDOWN:            if (btnAcptNewInput == false)                    break;
-            switchState(pBtnPressed);
+            switchState(bufferKeypad);
             btnAcptNewInput = false;
             break;
         }
     }
 
-    void aknNewInput()              {        btnAcptNewInput = false;                 }
+    // void aknNewInput()              {        btnAcptNewInput = false;                 }
 
 private:
     int *pBtnPressed;            //Pointer auf keyValue, werd dor switchState geben fürn switchCheck

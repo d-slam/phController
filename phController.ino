@@ -9,54 +9,53 @@
 
 //MENUMAP===============================================Muas do bleiben wegn pointer auf InputButtons...
 state_t state = SYS_WAIT;     //init State
-
-void switchState(int* pButton)                
+void switchState(int pButton)                
 {
   switch (state)  {
 
-  case SYS_INT_RUN:           if (*pButton == btnRIGHT)      state = SYS_WAIT;              break;
-  case RUN_RED:               if (*pButton == btnRIGHT)      state = SYS_WAIT;              break;
-  case RUN_YELLOW:            if (*pButton == btnRIGHT)      state = SYS_WAIT;              break;
-  case RUN_GREEN:             if (*pButton == btnRIGHT)      state = SYS_WAIT;              break;
-  case RUN_ERROR:             if (*pButton == btnRIGHT)      state = SYS_WAIT;              break;
+  case SYS_INT_RUN:           if (pButton == btnRIGHT)      state = SYS_WAIT;              break;
+  case RUN_RED:               if (pButton == btnRIGHT)      state = SYS_WAIT;              break;
+  case RUN_YELLOW:            if (pButton == btnRIGHT)      state = SYS_WAIT;              break;
+  case RUN_GREEN:             if (pButton == btnRIGHT)      state = SYS_WAIT;              break;
+  case RUN_ERROR:             if (pButton == btnRIGHT)      state = SYS_WAIT;              break;
 
   case SYS_WAIT:
-                              if (*pButton == btnRIGHT)      state = SYS_SET_SOLL;
-                              if (*pButton == btnLEFT)       state = SYS_INT_RUN;
-                                                                                            break;
+                              if (pButton == btnRIGHT)      state = SYS_SET_SOLL;
+                              if (pButton == btnLEFT)       state = SYS_INT_RUN;
+                                                                                           break;
 
   case SYS_SET_SOLL:
-                              if (*pButton == btnRIGHT)      state = SYS_SET_THRES;
-                              if (*pButton == btnLEFT)       state = SYS_WAIT;
-                              if (*pButton == btnUP)         state = INC_SET_SOLL;
-                              if (*pButton == btnDOWN)       state = DEC_SET_SOLL;
-                                                                                            break;
+                              if (pButton == btnRIGHT)      state = SYS_SET_THRES;
+                              if (pButton == btnLEFT)       state = SYS_WAIT;
+                              if (pButton == btnUP)         state = INC_SET_SOLL;
+                              if (pButton == btnDOWN)       state = DEC_SET_SOLL;
+                                                                                           break;
 
   case SYS_SET_THRES:
-                              if (*pButton == btnRIGHT)      state = SYS_CAL;
-                              if (*pButton == btnLEFT)       state = SYS_SET_SOLL;
-                              if (*pButton == btnUP)         state = INC_SET_THRES;
-                              if (*pButton == btnDOWN)       state = DEC_SET_THRES;
-                                                                                            break;
+                              if (pButton == btnRIGHT)      state = SYS_CAL;
+                              if (pButton == btnLEFT)       state = SYS_SET_SOLL;
+                              if (pButton == btnUP)         state = INC_SET_THRES;
+                              if (pButton == btnDOWN)       state = DEC_SET_THRES;
+                                                                                           break;
 
   case SYS_CAL:
-                              if (*pButton == btnLEFT)       state = SYS_SET_THRES;
-                              if (*pButton == btnSELECT)     state = CAL_PH4;
-                                                                                            break;
+                              if (pButton == btnLEFT)       state = SYS_SET_THRES;
+                              if (pButton == btnSELECT)     state = CAL_PH4;
+                                                                                           break;
 
   case CAL_PH4:
-                              if (*pButton == btnSELECT)     state = CAL_PH7;
-                              if (*pButton == btnLEFT)       state = SYS_CAL;
-                                                                                            break;
+                              if (pButton == btnSELECT)     state = CAL_PH7;
+                              if (pButton == btnLEFT)       state = SYS_CAL;
+                                                                                           break;
 
   case CAL_PH7:
-                              if (*pButton == btnSELECT)     state = CAL_CONF;
-                              if (*pButton == btnLEFT)       state = SYS_CAL;
-                                                                                            break;
+                              if (pButton == btnSELECT)     state = CAL_CONF;
+                              if (pButton == btnLEFT)       state = SYS_CAL;
+                                                                                           break;
 
   case CAL_CONF:
-                              if (*pButton == btnSELECT)     state = CAL_OK;
-                              if (*pButton == btnLEFT)       state = SYS_CAL;
+                              if (pButton == btnSELECT)     state = CAL_OK;
+                              if (pButton == btnLEFT)       state = SYS_CAL;
                                                                                             break;
 
   case CAL_OK:                                               state = SYS_WAIT;              break;
@@ -64,6 +63,47 @@ void switchState(int* pButton)
 
 }
 
+//VERY!GLOBALS===============================================
+#include "OutputLCDScreen.h"
+#include "InputButtons.h"
+#include "InputPhSonde.h"
+
+//GLOBALS===============================================
+float phIst = 0.0;
+float phLast = 0.0;
+float phSoll = 5.5;
+float phSollThres = 0.5;
+
+int decRUNState = 0;   //wieviel durchläufe bis phSoll<=>phIst check
+
+//MODUES===============================================
+OutputLCDScreen outputLCDScreen(&phLast, &phSoll, &phSollThres);
+InputPhSonde inputPhSonde;
+
+InputButtons inputButtons;  
+
+//SETUP===============================================
+void setup()
+{
+  Serial.begin(9600);
+  Serial.println("Serial hüü!");  
+
+  outputLCDScreen.drawStartScreen();
+  pinMode(MOTORGATE, OUTPUT);
+}
+
+//LOOP==========================================================
+void loop()
+{  
+  inputButtons.checkForNewButtonPress();
+
+  
+  outputLCDScreen.redraw(state);
+
+
+  executeState(state);
+  delay(20);
+}
 
 //ACHTUNG!STATMASCINE===============================================
 void executeState(state_t s)
@@ -192,46 +232,3 @@ void doCAL_OK()
   inputPhSonde.applyCallibration();
       //wait, donn back...
 }
-
-//VERY!GLOBALS===============================================
-#include "OutputLCDScreen.h"
-#include "InputButtons.h"
-#include "InputPhSonde.h"
-
-//GLOBALS===============================================
-float phIst = 0.0;
-float phLast = 0.0;
-float phSoll = 5.5;
-float phSollThres = 0.5;
-
-int decRUNState = 0;   //wieviel durchläufe bis phSoll<=>phIst check
-
-//MODUES===============================================
-OutputLCDScreen outputLCDScreen(&phLast, &phSoll, &phSollThres);
-InputPhSonde inputPhSonde;
-
-InputButtons inputButtons;  
-
-//SETUP===============================================
-void setup()
-{
-  Serial.begin(9600);
-  Serial.println("Serial hüü!");  
-
-  outputLCDScreen.drawStartScreen();
-  pinMode(MOTORGATE, OUTPUT);
-}
-
-//LOOP==========================================================
-void loop()
-{  
-  inputButtons.checkForNewButtonPress();
-
-
-  outputLCDScreen.redraw(state);
-
-
-  executeState(state);
-  delay(20);
-}
-
