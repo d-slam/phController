@@ -14,7 +14,7 @@ bool callback (int bufferkey)
   return false;
 }
 
-// void (*pCallback) (int);
+ using pCallback = bool (*) (int);
 
 
 

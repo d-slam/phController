@@ -42,8 +42,6 @@ public:
         }
     }
 
-    // void aknNewInput()              {        btnAcptNewInput = false;                 }
-
 private:
     int *pBtnPressed;            //Pointer auf keyValue, werd dor switchState geben fürn switchCheck
 
