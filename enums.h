@@ -9,11 +9,13 @@
 ////REALSHIZ
 typedef enum
 {
-  SYS_RUN_INTERFACE,
-  SYS_RUN_RED,
-  SYS_RUN_YELLOW,
-  SYS_RUN_GREEN,
-  SYS_RUN_ERROR,
+
+  SYS_INT_RUN,            //run interface
+  RUN_RED,
+  RUN_YELLOW,
+  RUN_GREEN,
+  RUN_ERROR,
+
   SYS_WAIT,
 
   SYS_SET_SOLL,
@@ -29,7 +31,9 @@ typedef enum
   CAL_PH7,
   CAL_CONF,
   CAL_OK,
+
   VOID_DUMMY
+
 } state_t;
 
 //btnINIT====================Müssen do bleiben suscht siegi sie net in dor menumap

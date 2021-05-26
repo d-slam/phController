@@ -12,19 +12,18 @@ public:
 
     float getPhIst()
     {
-        float volt = sampleVoltage();
+        volt = sampleVoltage();
         phIst = calDelta * volt + calOffset;
         return phIst;
     }
 
-    void setVolt4(float v)
+    void setVolt4()
     {
-        volt4 = v;
+        volt4 = volt;
     }
-
-    void setVolt7(float v)
+    void setVolt7()
     {
-        volt7 = v;
+        volt7 = volt;
     }
 
     void calcDelta()
@@ -42,10 +41,9 @@ private:
     float tempCalDelta = 2.19;
     float tempCalOffset = 2.85;
 
+    float volt = 0.0;
     float volt7 = 0.0;
     float volt4 = 0.0;
-
-    // float volt = 0.0;
 
     float phIst = 0.0;
     float phLast = 0.0;
