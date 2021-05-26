@@ -27,6 +27,7 @@ public:
     case SYS_RUN_RED:       drawSYS_RUN_RED();          break;
     case SYS_RUN_YELLOW:    drawSYS_RUN_YELLOW();       break;
     case SYS_RUN_GREEN:     drawSYS_RUN_GREEN();        break;
+    case SYS_RUN_ERROR:     drawSYS_RUN_ERROR();          break;
     case SYS_WAIT:          drawSYS_WAIT();         break;
     case SYS_SET_SOLL:      drawSYS_SET_SOLL();     break;
     case SYS_SET_THRES:     drawSYS_SET_THRES();    break;
@@ -54,10 +55,16 @@ private:
   }
   void drawSYS_RUN_GREEN()
   {
-    writeAtXY(
-        "Halte", 8, 0);
+    writeAtXY("Halte", 8, 0);
     drawSollAndThres();
   }
+
+  void drawSYS_RUN_ERROR()
+  {
+    writeAtXY("ERROR", 8, 0);
+    writeAtXY("pls ReCal", 7, 1);
+  }
+
   void drawSollAndThres()
   {
     writeFloatAtXY(*pPhSoll, 8, 1);
