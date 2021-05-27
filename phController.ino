@@ -44,13 +44,13 @@ void setup()
 //LOOP==========================================================
 void loop()
 {
-  inputButtons.checkForNewButtonPress();      
+  // inputButtons.checkForNewButtonPress();      
 
-  
+
   executeState(state);
 
 
-  outputLCDScreen.redraw(state);
+  // outputLCDScreen.redraw(state);
 
   delay(20);
 }
@@ -83,18 +83,23 @@ void executeState(state_t s)
 
 void doSYS_INT_RUN()          
 {
-  decRUNState = 20;              //achtung bremst a, wenn auf WAIT wechsl
+  decRUNState = 50;              //achtung bremst a, wenn auf WAIT wechsl
   Serial.println("Hallo interface");
-  phLast = inputPhSonde.getPhIst();     
+  phLast = inputPhSonde.getPhIst();  
 
   if      (phLast >= phSoll + phSollThres)    {    state = RUN_RED;     }
   else if (phLast >= phSoll)                  {    state = RUN_YELLOW;  }
   else if (phLast < phSoll)                   {    state = RUN_GREEN;   }
-  else                                        {    state = RUN_ERROR;   }         //error case     
+  else                                        {    state = RUN_ERROR;   }         //error case  
+  
+  // outputLCDScreen.redraw(state);
+
 }
 void doRUN_RED()
 {
   digitalWrite(MOTORGATE, HIGH);
+  outputLCDScreen.redraw(state);
+  inputButtons.checkForNewButtonPress();      
 
   decRUNState -= 1;
   if (decRUNState == 0)
@@ -103,6 +108,8 @@ void doRUN_RED()
 void doRUN_YELLOW()
 {
   digitalWrite(MOTORGATE, LOW);
+  outputLCDScreen.redraw(state);
+  inputButtons.checkForNewButtonPress();      
 
   decRUNState -= 1;
   if (decRUNState == 0)
@@ -111,6 +118,8 @@ void doRUN_YELLOW()
 void doRUN_GREEN()
 {
   digitalWrite(MOTORGATE, LOW);
+  outputLCDScreen.redraw(state);
+  inputButtons.checkForNewButtonPress();      
 
   decRUNState -= 1;
   if (decRUNState == 0)
@@ -119,15 +128,24 @@ void doRUN_GREEN()
 void doRUN_ERROR()
 {
   digitalWrite(MOTORGATE, LOW);
+  outputLCDScreen.redraw(state);
+  inputButtons.checkForNewButtonPress();      
 
 }
 void doSYS_WAIT()
 {
   digitalWrite(MOTORGATE, LOW);
   phLast = inputPhSonde.getPhIst();
+  outputLCDScreen.redraw(state);
+
+  inputButtons.checkForNewButtonPress();      
+
 }
 void doSYS_SET_SOLL() 
 {
+  inputButtons.checkForNewButtonPress();  
+  outputLCDScreen.redraw(state);
+
 }
 void doINC_SET_SOLL()
 {
@@ -141,6 +159,9 @@ void doDEC_SET_SOLL()
 }
 void doSYS_SET_THRES()
 {
+  inputButtons.checkForNewButtonPress();  
+  outputLCDScreen.redraw(state);
+
 }
 void doINC_SET_THRES()
 {
@@ -154,24 +175,36 @@ void doDEC_SET_THRES()
 }
 void doSYS_CAL()
 {
+  inputButtons.checkForNewButtonPress();    
+  outputLCDScreen.redraw(state);
 }
 void doCAL_PH4()
 {
   phLast = inputPhSonde.getPhIst();
+  outputLCDScreen.redraw(state);
+  inputButtons.checkForNewButtonPress();   
 }
 void doCAL_PH7()
 {
-  inputPhSonde.setVolt4();
   phLast = inputPhSonde.getPhIst();
+  inputPhSonde.setVolt4();
+  outputLCDScreen.redraw(state);
+  inputButtons.checkForNewButtonPress();   
 }
 void doCAL_CONF()
 {
+  outputLCDScreen.redraw(state);
   inputPhSonde.setVolt7();
   inputPhSonde.calcDelta();
+  inputButtons.checkForNewButtonPress();      
+
 }
 void doCAL_OK()
 {
+  outputLCDScreen.redraw(state);
   inputPhSonde.applyCallibration();
+  inputButtons.checkForNewButtonPress();      
+
       //wait, donn back...
 }
 

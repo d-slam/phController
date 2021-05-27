@@ -48,6 +48,8 @@ private:
     float phIst = 0.0;
     float phLast = 0.0;
 
+    // int nPhIstSmooth = 0;
+
     float calDelta = 2.19;
     float calOffset = 2.85;
 
