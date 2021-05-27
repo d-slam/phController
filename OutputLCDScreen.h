@@ -19,8 +19,7 @@ public:
       : pPhLast(_phLast), pPhSoll(_phSoll), pPhSollThres(_phSollThres)
             {    lcd.begin(16, 2);  }
 
-  // void redraw(const statesSys_t SYSstate, const statesCal_t CALstate, const statesRun_t RUNstate)
-  void redraw(const state_t state)  {
+  void redraw(state_t state)  {
     lcd.clear();
     drawLeftScreen();
     switch (state)    {
@@ -58,13 +57,11 @@ private:
     writeAtXY("Halte", 8, 0);
     drawSollAndThres();
   }
-
   void drawSYS_RUN_ERROR()
   {
     writeAtXY("ERROR", 8, 0);
     writeAtXY("pls ReCal", 7, 1);
   }
-
   void drawSollAndThres()
   {
     writeFloatAtXY(*pPhSoll, 8, 1);

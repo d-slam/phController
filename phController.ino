@@ -69,7 +69,7 @@ void executeState(state_t s)
                 case CAL_PH4:         doCAL_PH4();         break;
                 case CAL_PH7:         doCAL_PH7();         break;
                 case CAL_CONF:        doCAL_CONF();        break;
-                case CAL_OK:          doCAL_OK();          break; //eventuell delay(1500) donn state == SYS_WAIT 
+                case CAL_OK:          doCAL_OK();          break; 
   }
 }
 
@@ -172,7 +172,6 @@ void decRUNState()
   if (nRunState == 0)
     state = SYS_INT_RUN;
 }
-
 void reIO(int r)
 {
   switch(r)
@@ -184,36 +183,30 @@ void reIO(int r)
       case RE_PH_LCD_BTN: rePhLcdBtn();     break;
   }
 }
-
 void reBtn()
 {
   inputButtons.checkForNewButtonPress();
 }
-
 void reLcd()
 {
   outputLCDScreen.redraw(state);
 }
-
 void reLcdBtn()
 {
   inputButtons.checkForNewButtonPress();  
   outputLCDScreen.redraw(state);
 }
-
 void rePhLcd()
 {
   phLast = inputPhSonde.getPhIstSmooth();
   outputLCDScreen.redraw(state);
 }
-
 void rePhLcdBtn()
 {
   phLast = inputPhSonde.getPhIstSmooth();
   outputLCDScreen.redraw(state);
   inputButtons.checkForNewButtonPress(); 
 }
-
 
 //MENUMAP====================callback von dor inputButtons===========================
 bool switchState(int* pButton)                
