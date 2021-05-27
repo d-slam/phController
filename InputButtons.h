@@ -12,7 +12,13 @@ public:
     InputButtons()
     {
         pBtnPressed = &bufferKeypad;
-        // pCallback = &callback;
+
+    }
+
+    void getPointer(void (*_p)(int*))
+    {
+
+        pSwitch = _p;
     }
 
     void checkForNewButtonPress()                 
@@ -22,31 +28,39 @@ public:
         case btnNONE:               btnAcptNewInput = true;                    break;
 
         case btnRIGHT:            if (btnAcptNewInput == false)                break;
-            btnAcptNewInput = inputButtonsCallback(pBtnPressed);
+            pSwitch(pBtnPressed);
+            btnAcptNewInput = false;
             break;
 
         case btnLEFT:            if (btnAcptNewInput == false)                   break;
-            btnAcptNewInput = inputButtonsCallback(pBtnPressed);
+            pSwitch(pBtnPressed);
+            btnAcptNewInput = false;
+
             break;
 
         case btnSELECT:            if (btnAcptNewInput == false)                 break;
-            btnAcptNewInput = inputButtonsCallback(pBtnPressed);
+            pSwitch(pBtnPressed);
+            btnAcptNewInput = false;
+
             break;
 
         case btnUP:            if (btnAcptNewInput == false)                     break;
-            btnAcptNewInput = inputButtonsCallback(pBtnPressed);
+            pSwitch(pBtnPressed);
+            btnAcptNewInput = false;
+
             break;
 
         case btnDOWN:            if (btnAcptNewInput == false)                    break;
-            btnAcptNewInput = inputButtonsCallback(pBtnPressed);
+            pSwitch(pBtnPressed);
+            btnAcptNewInput = false;
+
             break;
         }
     }
 
 private:
     int *pBtnPressed;            //Pointer auf keyValue, werd dor switchState geben fürn switchCheck
-
-    // bool (*pCallback) (int* );
+    void (*pSwitch)(int *);
 
     int keyAnalog = 0;
     int bufferKeypad = 0;

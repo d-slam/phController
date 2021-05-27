@@ -8,6 +8,8 @@
 #include "enums.h"
 
 void (*pSwitchState)(int*);
+
+
 bool inputButtonsCallback (int* bufferkey)
 {
   pSwitchState(bufferkey);
@@ -45,7 +47,8 @@ void setup()
   outputLCDScreen.drawStartScreen();
   pinMode(MOTORGATE, OUTPUT);
 
-  pSwitchState=&switchState;
+  pSwitchState = &switchState;
+  inputButtons.getPointer(pSwitchState);
 }
 
 //LOOP==========================================================
@@ -101,7 +104,8 @@ void switchState(int* pButton)
                               if (*pButton == btnLEFT)       state = SYS_CAL;
                                                                                             break;
   case CAL_OK:                                               state = SYS_WAIT;              break;
-  }
+  } 
+  // return false;
 }
 
 
