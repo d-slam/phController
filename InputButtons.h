@@ -6,38 +6,39 @@
 #ifndef InputButtons_h
 #define InputButtons_h
 
-    
-
-
 class InputButtons
 {
 public:
-    InputButtons()                  {        pBtnPressed = &bufferKeypad;             }  
+    InputButtons()
+    {
+        pBtnPressed = &bufferKeypad;
+        // pCallback = &callback;
+    }
 
     void checkForNewButtonPress()                 
     {
-        switch (bufferKeypad = getKeyAnalog())
+        switch (bufferKeypad = getBtnIndex())
         {
         case btnNONE:               btnAcptNewInput = true;                    break;
 
         case btnRIGHT:            if (btnAcptNewInput == false)                break;
-            btnAcptNewInput = callback(bufferKeypad);
+            btnAcptNewInput = inputButtonsCallback(pBtnPressed);
             break;
 
         case btnLEFT:            if (btnAcptNewInput == false)                   break;
-            btnAcptNewInput = callback(bufferKeypad);
+            btnAcptNewInput = inputButtonsCallback(pBtnPressed);
             break;
 
         case btnSELECT:            if (btnAcptNewInput == false)                 break;
-            btnAcptNewInput = callback(bufferKeypad);
+            btnAcptNewInput = inputButtonsCallback(pBtnPressed);
             break;
 
         case btnUP:            if (btnAcptNewInput == false)                     break;
-            btnAcptNewInput = callback(bufferKeypad);
+            btnAcptNewInput = inputButtonsCallback(pBtnPressed);
             break;
 
         case btnDOWN:            if (btnAcptNewInput == false)                    break;
-            btnAcptNewInput = callback(bufferKeypad);
+            btnAcptNewInput = inputButtonsCallback(pBtnPressed);
             break;
         }
     }
@@ -45,12 +46,14 @@ public:
 private:
     int *pBtnPressed;            //Pointer auf keyValue, werd dor switchState geben fürn switchCheck
 
+    // bool (*pCallback) (int* );
+
     int keyAnalog = 0;
     int bufferKeypad = 0;
 
     bool btnAcptNewInput = false;
 
-    int getKeyAnalog()
+    int getBtnIndex()
     {
         keyAnalog = analogRead(0); // read the value from the sensor
         if (keyAnalog > 1000)              return btnNONE;
