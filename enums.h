@@ -51,4 +51,12 @@ typedef enum
 #define MOTORGATE 2
 
 
+//StateRefreshes====================
+#define RE_BTN 0
+#define RE_LCD 1
+#define RE_LCD_BTN 2
+#define RE_PH_LCD 3
+#define RE_PH_LCD_BTN 4
+
+
 #endif
