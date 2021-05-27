@@ -20,7 +20,7 @@ float phSollThres = 0.5;
 
 state_t state = SYS_WAIT;     //init State
 
-int decRUNState = 0;        //wieviel durchläufe bis phSoll<=>phIst check
+int nRunState = 0;        //wieviel durchläufe bis phSoll<=>phIst check
 int decRefreshLCD = 0;      //wieviel cycles worten bis lcdRefresh
 
 //MODUES===============================================
@@ -77,61 +77,50 @@ void executeState(state_t s)
 
 void doSYS_INT_RUN()          
 {
-  decRUNState = 10;     
-  phLast = inputPhSonde.getPhIstSmooth();  
+  nRunState = 10;     
+  phLast = inputPhSonde.getPhIstSmooth(); 
 
   if      (phLast >= phSoll + phSollThres)    {    state = RUN_RED;     }
   else if (phLast >= phSoll)                  {    state = RUN_YELLOW;  }
   else if (phLast < phSoll)                   {    state = RUN_GREEN;   }
-  else                                        {    state = RUN_ERROR;   }         //error case  
+  else                                        {    state = RUN_ERROR;   }         
   
   outputLCDScreen.redraw(state);
-
 }
 void doRUN_RED()
 {
   digitalWrite(MOTORGATE, HIGH);
-  inputButtons.checkForNewButtonPress();  
-  decRUNState -= 1;
-  if (decRUNState == 0)
-    state = SYS_INT_RUN;
+  inputButtons.checkForNewButtonPress();
+  decRUNState();
 }
 void doRUN_YELLOW()
 {
   digitalWrite(MOTORGATE, LOW);
-  inputButtons.checkForNewButtonPress(); 
-  decRUNState -= 1;
-  if (decRUNState == 0)
-    state = SYS_INT_RUN;
+  inputButtons.checkForNewButtonPress();
+  decRUNState();
 }
 void doRUN_GREEN()
 {
   digitalWrite(MOTORGATE, LOW);
-  inputButtons.checkForNewButtonPress(); 
-  decRUNState -= 1;
-  if (decRUNState == 0)
-    state = SYS_INT_RUN;
+  inputButtons.checkForNewButtonPress();
+  decRUNState();
 }
 void doRUN_ERROR()
 {
   digitalWrite(MOTORGATE, LOW);
-  inputButtons.checkForNewButtonPress();      
-
+  inputButtons.checkForNewButtonPress();   
 }
 void doSYS_WAIT()
 {
   digitalWrite(MOTORGATE, LOW);
   phLast = inputPhSonde.getPhIstSmooth();
   outputLCDScreen.redraw(state);
-
-  inputButtons.checkForNewButtonPress();      
-
+  inputButtons.checkForNewButtonPress();  
 }
 void doSYS_SET_SOLL() 
 {
   inputButtons.checkForNewButtonPress();  
   outputLCDScreen.redraw(state);
-
 }
 void doINC_SET_SOLL()
 {
@@ -147,7 +136,6 @@ void doSYS_SET_THRES()
 {
   inputButtons.checkForNewButtonPress();  
   outputLCDScreen.redraw(state);
-
 }
 void doINC_SET_THRES()
 {
@@ -182,18 +170,22 @@ void doCAL_CONF()
   outputLCDScreen.redraw(state);
   inputPhSonde.setVolt7();
   inputPhSonde.calcDelta();
-  inputButtons.checkForNewButtonPress();      
-
+  inputButtons.checkForNewButtonPress();  
 }
 void doCAL_OK()
 {
   outputLCDScreen.redraw(state);
   inputPhSonde.applyCallibration();
-  inputButtons.checkForNewButtonPress();      
-
-      //wait, donn back...
+  delay(1500);
+  state = SYS_WAIT;
 }
-
+//Helper///
+void decRUNState()
+{
+  nRunState -= 1;
+  if (nRunState == 0)
+    state = SYS_INT_RUN;
+}
 
 //MENUMAP====================callback von dor inputButtons===========================
 bool switchState(int* pButton)                
