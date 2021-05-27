@@ -48,11 +48,6 @@ void loop()
   delay(20);
 }
 
-
-
-
-
-
 //ACHTUNG!STATMASCINE===============================================
 void executeState(state_t s)
 {  
