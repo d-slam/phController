@@ -9,16 +9,9 @@
 class InputButtons
 {
 public:
-    InputButtons()
+    InputButtons(bool (*_p)(int *)) : pSwitchStateFkt(_p)
     {
         pBtnPressed = &bufferKeypad;
-
-    }
-
-    void getPointer(void (*_p)(int*))
-    {
-
-        pSwitch = _p;
     }
 
     void checkForNewButtonPress()                 
@@ -26,41 +19,22 @@ public:
         switch (bufferKeypad = getBtnIndex())
         {
         case btnNONE:               btnAcptNewInput = true;                    break;
-
         case btnRIGHT:            if (btnAcptNewInput == false)                break;
-            pSwitch(pBtnPressed);
-            btnAcptNewInput = false;
-            break;
-
+            btnAcptNewInput = pSwitchStateFkt(pBtnPressed);            break;
         case btnLEFT:            if (btnAcptNewInput == false)                   break;
-            pSwitch(pBtnPressed);
-            btnAcptNewInput = false;
-
-            break;
-
+            btnAcptNewInput = pSwitchStateFkt(pBtnPressed);            break;
         case btnSELECT:            if (btnAcptNewInput == false)                 break;
-            pSwitch(pBtnPressed);
-            btnAcptNewInput = false;
-
-            break;
-
+            btnAcptNewInput = pSwitchStateFkt(pBtnPressed);            break;
         case btnUP:            if (btnAcptNewInput == false)                     break;
-            pSwitch(pBtnPressed);
-            btnAcptNewInput = false;
-
-            break;
-
+            btnAcptNewInput = pSwitchStateFkt(pBtnPressed);            break;
         case btnDOWN:            if (btnAcptNewInput == false)                    break;
-            pSwitch(pBtnPressed);
-            btnAcptNewInput = false;
-
-            break;
+            btnAcptNewInput = pSwitchStateFkt(pBtnPressed);            break;
         }
     }
 
 private:
-    int *pBtnPressed;            //Pointer auf keyValue, werd dor switchState geben fürn switchCheck
-    void (*pSwitch)(int *);
+    int *pBtnPressed;                   //Pointer auf keyValue, werd dor switchState geben fürn switchCheck
+    bool (*pSwitchStateFkt)(int *);
 
     int keyAnalog = 0;
     int bufferKeypad = 0;

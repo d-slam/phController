@@ -7,17 +7,6 @@
 //////////////////////////////////////////////////////////////
 #include "enums.h"
 
-void (*pSwitchState)(int*);
-
-
-bool inputButtonsCallback (int* bufferkey)
-{
-  pSwitchState(bufferkey);
-
-  return false;
-}
-
-
 //VERY!GLOBALS===============================================
 #include "OutputLCDScreen.h"
 #include "InputButtons.h"
@@ -36,7 +25,7 @@ int decRUNState = 0;        //wieviel durchläufe bis phSoll<=>phIst check
 OutputLCDScreen outputLCDScreen(&phLast, &phSoll, &phSollThres);
 
 InputPhSonde inputPhSonde;
-InputButtons inputButtons;  
+InputButtons inputButtons(&switchState);  
 
 //SETUP===============================================
 void setup()
@@ -47,8 +36,6 @@ void setup()
   outputLCDScreen.drawStartScreen();
   pinMode(MOTORGATE, OUTPUT);
 
-  pSwitchState = &switchState;
-  inputButtons.getPointer(pSwitchState);
 }
 
 //LOOP==========================================================
@@ -62,7 +49,7 @@ void loop()
 }
 
 //MENUMAP===============================================
-void switchState(int* pButton)                
+bool switchState(int* pButton)                
 {
 
   switch (state)  {
@@ -104,8 +91,7 @@ void switchState(int* pButton)
                               if (*pButton == btnLEFT)       state = SYS_CAL;
                                                                                             break;
   case CAL_OK:                                               state = SYS_WAIT;              break;
-  } 
-  // return false;
+  }   return false;
 }
 
 
