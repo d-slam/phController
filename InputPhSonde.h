@@ -6,9 +6,31 @@
 #ifndef InputPhSonde_h
 #define InputPhSonde_h
 
+
+//CLASSDEF///////////////////////
+#define SMOOTHFAK 10                //jeder xte wert isch phLast
+//END///////////////////////
+
+
 class InputPhSonde
 {
 public:
+
+
+    float getPhIstSmooth()
+    {
+        vecBuffer += getPhIst();
+
+        incBuffer++;
+        if (incBuffer >= nSmooth)
+        {
+            phLast = vecBuffer / nSmooth;
+            incBuffer = 0;
+            vecBuffer = 0;
+        }
+        return phLast;
+    }
+    
 
     float getPhIst()
     {
@@ -48,7 +70,9 @@ private:
     float phIst = 0.0;
     float phLast = 0.0;
 
-    // int nPhIstSmooth = 0;
+    int nSmooth = SMOOTHFAK;
+    int incBuffer = 0;
+    float vecBuffer = 0.0;
 
     float calDelta = 2.19;
     float calOffset = 2.85;
