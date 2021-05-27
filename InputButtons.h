@@ -6,58 +6,42 @@
 #ifndef InputButtons_h
 #define InputButtons_h
 
-    
-
-
 class InputButtons
 {
 public:
-    InputButtons()                  {        pBtnPressed = &bufferKeypad;             }  
+    InputButtons(bool (*_p)(int *)) : pSwitchStateFkt(_p)
+    {
+        pBtnPressed = &bufferKeypad;
+    }
 
     void checkForNewButtonPress()                 
     {
-        switch (bufferKeypad = getKeyAnalog())
+        switch (bufferKeypad = getBtnIndex())
         {
         case btnNONE:               btnAcptNewInput = true;                    break;
-
         case btnRIGHT:            if (btnAcptNewInput == false)                break;
-            switchState(pBtnPressed);
-            btnAcptNewInput = false;
-            break;
-
+            btnAcptNewInput = pSwitchStateFkt(pBtnPressed);            break;
         case btnLEFT:            if (btnAcptNewInput == false)                   break;
-            switchState(pBtnPressed);
-            btnAcptNewInput = false;
-            break;
-
+            btnAcptNewInput = pSwitchStateFkt(pBtnPressed);            break;
         case btnSELECT:            if (btnAcptNewInput == false)                 break;
-            switchState(pBtnPressed);
-            btnAcptNewInput = false;
-            break;
-
+            btnAcptNewInput = pSwitchStateFkt(pBtnPressed);            break;
         case btnUP:            if (btnAcptNewInput == false)                     break;
-            switchState(pBtnPressed);
-            btnAcptNewInput = false;
-            break;
-
+            btnAcptNewInput = pSwitchStateFkt(pBtnPressed);            break;
         case btnDOWN:            if (btnAcptNewInput == false)                    break;
-            switchState(pBtnPressed);
-            btnAcptNewInput = false;
-            break;
+            btnAcptNewInput = pSwitchStateFkt(pBtnPressed);            break;
         }
     }
 
-    void aknNewInput()              {        btnAcptNewInput = false;                 }
-
 private:
-    int *pBtnPressed;            //Pointer auf keyValue, werd dor switchState geben fürn switchCheck
+    int *pBtnPressed;                   //Pointer auf keyValue, werd dor switchState geben fürn switchCheck
+    bool (*pSwitchStateFkt)(int *);
 
     int keyAnalog = 0;
     int bufferKeypad = 0;
 
     bool btnAcptNewInput = false;
 
-    int getKeyAnalog()
+    int getBtnIndex()
     {
         keyAnalog = analogRead(0); // read the value from the sensor
         if (keyAnalog > 1000)              return btnNONE;

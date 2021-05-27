@@ -7,68 +7,56 @@
 //////////////////////////////////////////////////////////////
 #include "enums.h"
 
-//MENUMAP===============================================Muas do bleiben wegn pointer auf InputButtons...
+//VERY!GLOBALS===============================================
+#include "OutputLCDScreen.h"
+#include "InputButtons.h"
+#include "InputPhSonde.h"
+
+//GLOBALS===============================================
+float phIst = 0.0;
+float phLast = 0.0;
+float phSoll = 5.5;
+float phSollThres = 0.5;
+
 state_t state = SYS_WAIT;     //init State
 
-void switchState(int* pButton)                
+int decRUNState = 0;        //wieviel durchläufe bis phSoll<=>phIst check
+int decRefreshLCD = 0;      //wieviel cycles worten bis lcdRefresh
+
+//MODUES===============================================
+OutputLCDScreen outputLCDScreen(&phLast, &phSoll, &phSollThres);
+
+InputPhSonde inputPhSonde;
+InputButtons inputButtons(&switchState);  
+
+//SETUP===============================================
+void setup()
 {
-  switch (state)  {
+  Serial.begin(9600);
+  Serial.println("Serial hüü!");
 
-  case SYS_INT_RUN:           if (*pButton == btnRIGHT)      state = SYS_WAIT;              break;
-  case RUN_RED:               if (*pButton == btnRIGHT)      state = SYS_WAIT;              break;
-  case RUN_YELLOW:            if (*pButton == btnRIGHT)      state = SYS_WAIT;              break;
-  case RUN_GREEN:             if (*pButton == btnRIGHT)      state = SYS_WAIT;              break;
-  case RUN_ERROR:             if (*pButton == btnRIGHT)      state = SYS_WAIT;              break;
+  outputLCDScreen.drawStartScreen();
 
-  case SYS_WAIT:
-                              if (*pButton == btnRIGHT)      state = SYS_SET_SOLL;
-                              if (*pButton == btnLEFT)       state = SYS_INT_RUN;
-                                                                                            break;
+  pinMode(MOTORGATE, OUTPUT);
 
-  case SYS_SET_SOLL:
-                              if (*pButton == btnRIGHT)      state = SYS_SET_THRES;
-                              if (*pButton == btnLEFT)       state = SYS_WAIT;
-                              if (*pButton == btnUP)         state = INC_SET_SOLL;
-                              if (*pButton == btnDOWN)       state = DEC_SET_SOLL;
-                                                                                            break;
+}
 
-  case SYS_SET_THRES:
-                              if (*pButton == btnRIGHT)      state = SYS_CAL;
-                              if (*pButton == btnLEFT)       state = SYS_SET_SOLL;
-                              if (*pButton == btnUP)         state = INC_SET_THRES;
-                              if (*pButton == btnDOWN)       state = DEC_SET_THRES;
-                                                                                            break;
+//LOOP==========================================================
+void loop()
+{
 
-  case SYS_CAL:
-                              if (*pButton == btnLEFT)       state = SYS_SET_THRES;
-                              if (*pButton == btnSELECT)     state = CAL_PH4;
-                                                                                            break;
+  inputButtons.checkForNewButtonPress();      //redraws via switchState
 
-  case CAL_PH4:
-                              if (*pButton == btnSELECT)     state = CAL_PH7;
-                              if (*pButton == btnLEFT)       state = SYS_CAL;
-                                                                                            break;
+  executeState(state);
+  outputLCDScreen.redraw(state);
 
-  case CAL_PH7:
-                              if (*pButton == btnSELECT)     state = CAL_CONF;
-                              if (*pButton == btnLEFT)       state = SYS_CAL;
-                                                                                            break;
-
-  case CAL_CONF:
-                              if (*pButton == btnSELECT)     state = CAL_OK;
-                              if (*pButton == btnLEFT)       state = SYS_CAL;
-                                                                                            break;
-
-  case CAL_OK:                                               state = SYS_WAIT;              break;
-  }
-
+  delay(20);
 }
 
 
 //ACHTUNG!STATMASCINE===============================================
 void executeState(state_t s)
-{
-  
+{  
  switch (state)  {
 
                 case SYS_INT_RUN:     doSYS_INT_RUN();     break;
@@ -93,8 +81,8 @@ void executeState(state_t s)
 
 void doSYS_INT_RUN()          
 {
-  decRUNState = 2;              //achtung bremst a, wenn auf WAIT wechsl
-
+  decRUNState = 20;              //achtung bremst a, wenn auf WAIT wechsl
+  Serial.println("Hallo interface");
   phLast = inputPhSonde.getPhIst();     
 
   if      (phLast >= phSoll + phSollThres)    {    state = RUN_RED;     }
@@ -102,7 +90,6 @@ void doSYS_INT_RUN()
   else if (phLast < phSoll)                   {    state = RUN_GREEN;   }
   else                                        {    state = RUN_ERROR;   }         //error case     
 }
-
 void doRUN_RED()
 {
   digitalWrite(MOTORGATE, HIGH);
@@ -111,7 +98,6 @@ void doRUN_RED()
   if (decRUNState == 0)
     state = SYS_INT_RUN;
 }
-
 void doRUN_YELLOW()
 {
   digitalWrite(MOTORGATE, LOW);
@@ -120,7 +106,6 @@ void doRUN_YELLOW()
   if (decRUNState == 0)
     state = SYS_INT_RUN;
 }
-
 void doRUN_GREEN()
 {
   digitalWrite(MOTORGATE, LOW);
@@ -129,20 +114,17 @@ void doRUN_GREEN()
   if (decRUNState == 0)
     state = SYS_INT_RUN;
 }
-
 void doRUN_ERROR()
 {
   digitalWrite(MOTORGATE, LOW);
 
 }
-
 void doSYS_WAIT()
 {
   digitalWrite(MOTORGATE, LOW);
-
+  // Serial.println("Hallo wait");
   phLast = inputPhSonde.getPhIst();
 }
-
 void doSYS_SET_SOLL() 
 {
 }
@@ -169,7 +151,6 @@ void doDEC_SET_THRES()
   phSollThres -= 0.1;
   state = SYS_SET_THRES;
 }
-
 void doSYS_CAL()
 {
 }
@@ -193,45 +174,51 @@ void doCAL_OK()
       //wait, donn back...
 }
 
-//VERY!GLOBALS===============================================
-#include "OutputLCDScreen.h"
-#include "InputButtons.h"
-#include "InputPhSonde.h"
 
-//GLOBALS===============================================
-float phIst = 0.0;
-float phLast = 0.0;
-float phSoll = 5.5;
-float phSollThres = 0.5;
-
-int decRUNState = 0;   //wieviel durchläufe bis phSoll<=>phIst check
-
-//MODUES===============================================
-OutputLCDScreen outputLCDScreen(&phLast, &phSoll, &phSollThres);
-InputPhSonde inputPhSonde;
-
-InputButtons inputButtons;  
-
-//SETUP===============================================
-void setup()
+//MENUMAP====================callback von dor inputButtons===========================
+bool switchState(int* pButton)                
 {
-  Serial.begin(9600);
-  Serial.println("Serial hüü!");  
-
-  outputLCDScreen.drawStartScreen();
-  pinMode(MOTORGATE, OUTPUT);
-}
-
-//LOOP==========================================================
-void loop()
-{  
-  inputButtons.checkForNewButtonPress();
-
-
+  switch (state)  {
+  case SYS_INT_RUN:           if (*pButton == btnRIGHT)      state = SYS_WAIT;              break;
+  case RUN_RED:               if (*pButton == btnRIGHT)      state = SYS_WAIT;              break;
+  case RUN_YELLOW:            if (*pButton == btnRIGHT)      state = SYS_WAIT;              break;
+  case RUN_GREEN:             if (*pButton == btnRIGHT)      state = SYS_WAIT;              break;
+  case RUN_ERROR:             if (*pButton == btnRIGHT)      state = SYS_WAIT;              break;
+  case SYS_WAIT:
+                              if (*pButton == btnRIGHT)      state = SYS_SET_SOLL;
+                              if (*pButton == btnLEFT)       state = SYS_INT_RUN;
+                                                                                           break;
+  case SYS_SET_SOLL:
+                              if (*pButton == btnRIGHT)      state = SYS_SET_THRES;
+                              if (*pButton == btnLEFT)       state = SYS_WAIT;
+                              if (*pButton == btnUP)         state = INC_SET_SOLL;
+                              if (*pButton == btnDOWN)       state = DEC_SET_SOLL;
+                                                                                           break;
+  case SYS_SET_THRES:
+                              if (*pButton == btnRIGHT)      state = SYS_CAL;
+                              if (*pButton == btnLEFT)       state = SYS_SET_SOLL;
+                              if (*pButton == btnUP)         state = INC_SET_THRES;
+                              if (*pButton == btnDOWN)       state = DEC_SET_THRES;
+                                                                                           break;
+  case SYS_CAL:
+                              if (*pButton == btnLEFT)       state = SYS_SET_THRES;
+                              if (*pButton == btnSELECT)     state = CAL_PH4;
+                                                                                           break;
+  case CAL_PH4:
+                              if (*pButton == btnSELECT)     state = CAL_PH7;
+                              if (*pButton == btnLEFT)       state = SYS_CAL;
+                                                                                           break;
+  case CAL_PH7:
+                              if (*pButton == btnSELECT)     state = CAL_CONF;
+                              if (*pButton == btnLEFT)       state = SYS_CAL;
+                                                                                           break;
+  case CAL_CONF:
+                              if (*pButton == btnSELECT)     state = CAL_OK;
+                              if (*pButton == btnLEFT)       state = SYS_CAL;
+                                                                                            break;
+  case CAL_OK:                                               state = SYS_WAIT;              break;
+  }
   outputLCDScreen.redraw(state);
-
-
-  executeState(state);
-  delay(20);
+  return false;
 }
 
