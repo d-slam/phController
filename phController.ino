@@ -44,10 +44,12 @@ void setup()
 //LOOP==========================================================
 void loop()
 {
+  inputButtons.checkForNewButtonPress();      
 
-  inputButtons.checkForNewButtonPress();      //redraws via switchState
-
+  
   executeState(state);
+
+
   outputLCDScreen.redraw(state);
 
   delay(20);
@@ -122,7 +124,6 @@ void doRUN_ERROR()
 void doSYS_WAIT()
 {
   digitalWrite(MOTORGATE, LOW);
-  // Serial.println("Hallo wait");
   phLast = inputPhSonde.getPhIst();
 }
 void doSYS_SET_SOLL() 
@@ -221,4 +222,3 @@ bool switchState(int* pButton)
   outputLCDScreen.redraw(state);
   return false;
 }
-
